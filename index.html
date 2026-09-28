@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -605,24 +606,16 @@
             overflow: hidden;
             padding: 10px;
             box-sizing: border-box;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: all 1s ease;
         }
 
-        /* center-box එක Smooth ලෙස විශාල වී වම් පැත්තට මාරු වීමට */
-        .center-box {
-            transition: all 4s ease !important;
-        }
-
-        /* Cam Mode එකේදී කොටුව විශාල වී පොඩ්ඩක් වම් පැත්තට මාරු වීම */
         .center-box.expanded {
             width: 53.33vw !important;
             height: 40vw !important;
             max-width: 533px !important;
             max-height: 400px !important;
             left: 40% !important;
-            /* 👈 මෙතැනින් කොටුව වම් පැත්තට (Left) තල්ලු වේ */
             padding: 0 !important;
-            /* 👈 මෙයින් ඇතුළත තිබෙන 10px හිස් ඉඩ සම්පූර්ණයෙන්ම නැති වේ */
         }
 
         .center-box:hover {
@@ -833,7 +826,6 @@
 </head>
 
 <body id="main-bg">
-
     <div class="toast-msg" id="toast-box">Alert Message</div>
 
     <div class="modal-overlay show-modal" id="start-mode-modal">
@@ -848,14 +840,10 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <span class="modal-close-btn" onclick="closeWidgetModal()">✖</span>
             <div class="modal-title">🔮 Select Widget</div>
-
-            <div class="modal-option-btn" onclick="activateWidget('FACE')">🤖 Cyber Face Widget
-            </div>
-            <div class="modal-option-btn" onclick="activateWidget('DATETIME')">📅 Date & Time Widget
-            </div>
+            <div class="modal-option-btn" onclick="activateWidget('FACE')">🤖 Cyber Face Widget</div>
+            <div class="modal-option-btn" onclick="activateWidget('DATETIME')">📅 Date & Time Widget</div>
             <div class="modal-option-btn" onclick="showTextInputField()">💬 Custom Text Widget</div>
-            <div class="modal-option-btn" onclick="activateWidget('SENSOR')">📡 Sensor Data Widget
-            </div>
+            <div class="modal-option-btn" onclick="activateWidget('SENSOR')">📡 Sensor Data Widget</div>
             <div class="modal-option-btn" onclick="activateWidget('CAM')">📷 Cam Mode</div>
 
             <div id="text-input-box" style="display: none; flex-direction: column; gap: 8px; margin-top: 5px;">
@@ -872,8 +860,7 @@
     <div class="top-status" id="top-status-bar">
         <div class="status-left">
             <div id="sys-mode-display" style="font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: 0.5px;">🎮
-                RC
-                CAR MODE</div>
+                RC CAR MODE</div>
             <div class="status-item"><span id="ws-status" class="ws-status-badge">DISCONNECTED</span></div>
 
             <div class="status-item" id="temp-box">
@@ -884,29 +871,25 @@
             </div>
 
             <div class="status-item" id="bat-box"><span id="bat-icon">🔋</span> <span id="bat-display"
-                    style="color:var(--primary-glow); font-weight:bold;">85%</span>
-            </div>
+                    style="color:var(--primary-glow); font-weight:bold;">85%</span></div>
             <div class="status-item" id="wifi-signal-box"><span> 📶 </span><span id="wifi-signal-text"
                     style="color:var(--primary-glow); font-weight:bold;">100%</span></div>
             <div class="status-item horn-status-box" id="horn-alert-container"><span>🔊</span> <span
                     style="color: var(--primary-glow); font-weight:bold;">HORN</span></div>
-            <div class="status-item signal-status-box" id="signal-status-container"><span>🚨</span>
-                <span id="signal-status-text" style="color: var(--neon-orange); font-weight:bold;">SIGNAL</span>
-            </div>
+            <div class="status-item signal-status-box" id="signal-status-container"><span>🚨</span> <span
+                    id="signal-status-text" style="color: var(--neon-orange); font-weight:bold;">SIGNAL</span></div>
             <div class="status-item bulb-status-box" id="bulb-container"><span>💡</span> <span id="led-display"
-                    style="color: #ffe600; font-weight:bold;">LED: 100%</span>
-            </div>
+                    style="color: #ffe600; font-weight:bold;">LED: 100%</span></div>
             <div class="status-item rgb-status-box" id="rgb-container"><span>✨</span> <span id="rgb-display"
-                    style="color: var(--neon-purple); font-weight:bold;">RGB
-                    ON</span></div>
+                    style="color: var(--neon-purple); font-weight:bold;">RGB ON</span></div>
 
             <div class="status-item" id="spd-box"><span
-                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">SPD:</span>
-                <span id="speed-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
+                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">SPD:</span> <span
+                    id="speed-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
             </div>
             <div class="status-item" id="str-box"><span
-                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">STR:</span>
-                <span id="steer-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
+                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">STR:</span> <span
+                    id="steer-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -921,7 +904,6 @@
             <span>🅰️ AUTO LIGHT (LDR)</span>
             <span id="auto-a-status">OFF</span>
         </div>
-        <!-- ➕ මෙතැනට Auto Arrow Light බොත්තම එකතු කරන්න -->
         <div class="auto-a-btn" id="auto-arrow-toggle" onclick="toggleAutoArrowButton()" style="margin-top: 5px;">
             <span>↪️ AUTO ARROW LIGHT</span>
             <span id="auto-arrow-status">OFF</span>
@@ -994,40 +976,36 @@
                     <div>🎯 STR : <span id="ui-steer">0%</span></div>
                 </div>
             </div>
-            <!-- ➕ Cam Mode එක සඳහා Full Fit iframe එක පමණක් -->
+
             <div id="widget-cam-container"
                 style="display: none; width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;">
                 <iframe id="cam-web-frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+                <div id="cam-touch-overlay" onclick="openWidgetModal(event)"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: block;">
+                </div>
             </div>
         </div>
 
         <div class="right-controls-group">
-
-            <!-- Steering Slider -->
             <div class="slider-container-horizontal">
                 <input type="range" min="-100" max="100" value="0" class="horizontal-steer-slider" id="steer-slider"
                     oninput="updateSteerSlider(this.value)">
             </div>
 
-            <!-- උඩ පේළිය: Light, Horn, RGB, Park බටන් -->
             <div class="button-row">
                 <div class="glass-btn light-main-btn" id="light-btn">🔅</div>
                 <div class="glass-btn horn-btn" id="btn-horn">🔊</div>
-                <div class="glass-btn rgb-toggle-btn" id="rgb-toggle-btn" onclick="toggleRGB()">✨
-                </div>
+                <div class="glass-btn rgb-toggle-btn" id="rgb-toggle-btn" onclick="toggleRGB()">✨</div>
                 <div class="glass-btn park-btn" id="btn-park" onclick="toggleParkMode()">🛑</div>
             </div>
 
-            <!-- ඊට පහළින් ඇති පේළිය: Signal Arrow බටන් දෙක ( Left ◀ සහ ▶ Right ) -->
             <div class="button-row" id="signal-btn-row">
-                <div class="glass-btn signal-btn" id="btn-signal-l" onclick="toggleSignal('L')">◀
-                </div>
-                <div class="glass-btn signal-btn" id="btn-signal-r" onclick="toggleSignal('R')">▶
-                </div>
+                <div class="glass-btn signal-btn" id="btn-signal-l" onclick="toggleSignal('L')">◀</div>
+                <div class="glass-btn signal-btn" id="btn-signal-r" onclick="toggleSignal('R')">▶</div>
+                <div class="glass-btn signal-btn" id="btn-joystick" style="display: none;" onclick="toggleJoystick()">
+                    🕹️</div>
             </div>
-
         </div>
-
     </div>
 
     <script>
@@ -1083,7 +1061,6 @@
         const autoAStatus = document.getElementById('auto-a-status');
         let isAutoAEnabled = false;
 
-        // ➕ අලුතින් එකතු කළ Auto Arrow Light Variables & Function
         const autoArrowToggle = document.getElementById('auto-arrow-toggle');
         const autoArrowStatus = document.getElementById('auto-arrow-status');
         const signalBtnRow = document.getElementById('signal-btn-row');
@@ -1094,20 +1071,11 @@
             if (isAutoArrowEnabled) {
                 autoArrowToggle.classList.add('a-active');
                 autoArrowStatus.innerText = "ON";
-
-                // Signal එකක් ON වී තිබුනොත් එය OFF කිරීම
-                if (activeSignal !== null) {
-                    toggleSignal(activeSignal);
-                }
-
-                // Arrow light buttons Hide කිරීම
+                if (activeSignal !== null) { toggleSignal(activeSignal); }
                 if (signalBtnRow) signalBtnRow.style.display = "none";
-
             } else {
                 autoArrowToggle.classList.remove('a-active');
                 autoArrowStatus.innerText = "OFF";
-
-                // Arrow light buttons නැවත Show කිරීම
                 if (signalBtnRow) signalBtnRow.style.display = "flex";
             }
             sendCmd("TOGGLE_AUTO_ARROW");
@@ -1184,24 +1152,12 @@
             if (isAutoAEnabled) {
                 autoAToggle.classList.add('a-active');
                 autoAStatus.innerText = "ON";
-
-                // ➕ Manual Light එක කලින් On කර තිබුණ නම් එය Off කිරීම
-                if (isLightOn) {
-                    toggleHeadlight();
-                }
-
-                // Manual Headlight බටන් එක Hide කිරීම
-                if (lightBtn) {
-                    lightBtn.style.display = "none";
-                }
+                if (isLightOn) { toggleHeadlight(); }
+                if (lightBtn) { lightBtn.style.display = "none"; }
             } else {
                 autoAToggle.classList.remove('a-active');
                 autoAStatus.innerText = "OFF";
-
-                // Manual Headlight බටන් එක නැවත පෙන්වීම
-                if (lightBtn) {
-                    lightBtn.style.display = "flex";
-                }
+                if (lightBtn) { lightBtn.style.display = "flex"; }
             }
             sendCmd("TOGGLE_AUTO_LDR");
         }
@@ -1232,9 +1188,7 @@
         function handleLightPressEnd(e) {
             if (e) e.preventDefault();
             clearTimeout(lightBtnPressTimer);
-            if (!isLongPress) {
-                toggleHeadlight();
-            }
+            if (!isLongPress) { toggleHeadlight(); }
         }
 
         lightBtn.addEventListener('touchstart', handleLightPressStart, { passive: false });
@@ -1245,11 +1199,8 @@
         function toggleHeadlight() {
             isLightOn = !isLightOn;
             updateLightUIState(isLightOn);
-            if (isLightOn) {
-                sendCmd("LIGHT_ON");
-            } else {
-                sendCmd("LIGHT_OFF");
-            }
+            if (isLightOn) sendCmd("LIGHT_ON");
+            else sendCmd("LIGHT_OFF");
         }
 
         function updateLightUIState(state) {
@@ -1323,6 +1274,16 @@
         function activateWidget(type) {
             activeWidget = type;
 
+            // ➕ CAM Mode එක තේරූ විට පමණක් 🕹️ බටන් එක පෙන්වීමේ Logic එක
+            const joystickBtn = document.getElementById('btn-joystick');
+            if (joystickBtn) {
+                if (type === 'CAM') {
+                    joystickBtn.style.display = "flex";
+                } else {
+                    joystickBtn.style.display = "none";
+                }
+            }
+
             widgetFace.style.display = "none";
             widgetDateTime.style.display = "none";
             widgetTextContainer.style.display = "none";
@@ -1350,12 +1311,18 @@
             } else if (type === 'CAM') {
                 if (centerBox) centerBox.classList.add('expanded');
 
+                // CAM Mode එකට ආ සැනින් Default එක 🕹️ OFF කර Menu Open වන තත්ත්වයට සෙට් කිරීම
+                isJoystickActive = false;
+                const joystickBtn = document.getElementById('btn-joystick');
+                const overlay = document.getElementById('cam-touch-overlay');
+
+                if (joystickBtn) joystickBtn.classList.remove('signal-active');
+                if (overlay) overlay.style.display = "block"; // Shield එක Display වේ
+
                 const camFrame = document.getElementById('cam-web-frame');
                 if (camContainer && camFrame) {
                     camContainer.style.display = "flex";
-
-                    // 👇 මෙතැනට ඔබගේ ESP32-CAM එකේ IP එක හෝ URL එක ලබාදෙන්න
-                    camFrame.src = "http://192.168.4.2";
+                    camFrame.src ="https://th.bing.com/th/id/OIP.NSGqssPjCKC1Ur3vpSdmDAHaE7?w=274&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3";
                 }
             }
 
@@ -1492,7 +1459,6 @@
             if (isParkMode) { slider.value = 0; speedDisplay.innerText = "0%"; return; }
 
             let parsedVal = parseInt(val);
-
             if (parsedVal === 0) {
                 if (!throttleSnapped) {
                     triggerHapticFeedback();
@@ -1513,7 +1479,6 @@
             if (isParkMode) { steerSlider.value = 0; steerDisplay.innerText = "0%"; return; }
 
             let parsedVal = parseInt(val);
-
             if (parsedVal === 0) {
                 if (!steerSnapped) {
                     triggerHapticFeedback();
@@ -1576,7 +1541,25 @@
                 } catch (e) { }
             };
         };
+
+        let isJoystickActive = false; // 🕹️ බටන් එකේ Active/Inactive තත්ත්වය
+
+        // 🕹️ බටන් එක එබූ විට Toggle වන Function එක
+        function toggleJoystick() {
+            isJoystickActive = !isJoystickActive;
+            const joystickBtn = document.getElementById('btn-joystick');
+            const overlay = document.getElementById('cam-touch-overlay');
+
+            if (isJoystickActive) {
+                // 🕹️ ON වූ විට: Shield Layer එක Hide වී Inner Web එක Control කළ හැක
+                if (joystickBtn) joystickBtn.classList.add('signal-active');
+                if (overlay) overlay.style.display = 'none';
+            } else {
+                // 🕹️ OFF වූ විට: Inner Web එක Lock වී, කොටුව Touch කළ විට Menu Open වේ
+                if (joystickBtn) joystickBtn.classList.remove('signal-active');
+                if (overlay) overlay.style.display = 'block';
+            }
+        }
     </script>
 </body>
-
-</html>
+</html>                   
