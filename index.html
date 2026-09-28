@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -606,7 +605,7 @@
             overflow: hidden;
             padding: 10px;
             box-sizing: border-box;
-            transition: all 4s ease;
+            transition: all 1s ease;
         }
 
         .center-box.expanded {
@@ -1073,11 +1072,17 @@
                 autoArrowToggle.classList.add('a-active');
                 autoArrowStatus.innerText = "ON";
                 if (activeSignal !== null) { toggleSignal(activeSignal); }
-                if (signalBtnRow) signalBtnRow.style.display = "none";
+
+                // signalBtnRow hide නොකර Signal බටන් දෙක පමණක් hide කිරීම
+                if (signalLBtn) signalLBtn.style.display = "none";
+                if (signalRBtn) signalRBtn.style.display = "none";
             } else {
                 autoArrowToggle.classList.remove('a-active');
                 autoArrowStatus.innerText = "OFF";
-                if (signalBtnRow) signalBtnRow.style.display = "flex";
+
+                // Auto Arrow OFF වූ විට Signal බටන් දෙක නැවත පෙන්වීම
+                if (signalLBtn) signalLBtn.style.display = "flex";
+                if (signalRBtn) signalRBtn.style.display = "flex";
             }
             sendCmd("TOGGLE_AUTO_ARROW");
         }
@@ -1323,7 +1328,7 @@
                 const camFrame = document.getElementById('cam-web-frame');
                 if (camContainer && camFrame) {
                     camContainer.style.display = "flex";
-                    camFrame.src ="https://th.bing.com/th/id/OIP.NSGqssPjCKC1Ur3vpSdmDAHaE7?w=274&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3";
+                    camFrame.src = "https://cmadushan2009-stack.github.io/information/";
                 }
             }
 
@@ -1563,4 +1568,5 @@
         }
     </script>
 </body>
-</html>                   
+
+</html>
