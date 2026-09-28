@@ -605,7 +605,7 @@
             overflow: hidden;
             padding: 10px;
             box-sizing: border-box;
-            transition: all 1s ease;
+            transition: all 4s ease;
         }
 
         .center-box.expanded {
@@ -1066,26 +1066,26 @@
         const signalBtnRow = document.getElementById('signal-btn-row');
         let isAutoArrowEnabled = false;
 
-        function toggleAutoArrowButton() {
-            isAutoArrowEnabled = !isAutoArrowEnabled;
-            if (isAutoArrowEnabled) {
-                autoArrowToggle.classList.add('a-active');
-                autoArrowStatus.innerText = "ON";
-                if (activeSignal !== null) { toggleSignal(activeSignal); }
-
-                // signalBtnRow hide නොකර Signal බටන් දෙක පමණක් hide කිරීම
-                if (signalLBtn) signalLBtn.style.display = "none";
-                if (signalRBtn) signalRBtn.style.display = "none";
-            } else {
-                autoArrowToggle.classList.remove('a-active');
-                autoArrowStatus.innerText = "OFF";
-
-                // Auto Arrow OFF වූ විට Signal බටන් දෙක නැවත පෙන්වීම
-                if (signalLBtn) signalLBtn.style.display = "flex";
-                if (signalRBtn) signalRBtn.style.display = "flex";
-            }
-            sendCmd("TOGGLE_AUTO_ARROW");
+       function toggleAutoArrowButton() {
+       isAutoArrowEnabled = !isAutoArrowEnabled;
+       if (isAutoArrowEnabled) {
+        autoArrowToggle.classList.add('a-active');
+        autoArrowStatus.innerText = "ON";
+        if (activeSignal !== null) { toggleSignal(activeSignal); }
+        
+        // signalBtnRow hide නොකර Signal බටන් දෙක පමණක් hide කිරීම
+        if (signalLBtn) signalLBtn.style.display = "none";
+        if (signalRBtn) signalRBtn.style.display = "none";
+        } else {
+        autoArrowToggle.classList.remove('a-active');
+        autoArrowStatus.innerText = "OFF";
+        
+        // Auto Arrow OFF වූ විට Signal බටන් දෙක නැවත පෙන්වීම
+        if (signalLBtn) signalLBtn.style.display = "flex";
+        if (signalRBtn) signalRBtn.style.display = "flex";
         }
+        sendCmd("TOGGLE_AUTO_ARROW");
+}
 
         let currentSteerX = 0;
         let currentThrottleY = 0;
@@ -1110,22 +1110,69 @@
         }
 
         let ws;
+        let wsReconnectTimer = null;
+        let wsHeartbeatTimer = null;
+
+        function handleWebSocketMessage(event) {
+            if (event.data.startsWith("ALERT_")) {
+                showToast(event.data.substring(6));
+                return;
+            }
+
+            if (event.data.startsWith("LIGHT_STATE_")) {
+                let st = event.data.substring(12) === "1";
+                updateLightUIState(st);
+                return;
+            }
+
+            try {
+                let data = JSON.parse(event.data);
+
+                if (data.dist !== undefined) document.getElementById('ui-dist').innerText = data.dist + " cm";
+                if (data.wifi !== undefined) document.getElementById('wifi-signal-text').innerText = data.wifi + "%";
+                if (data.ldr !== undefined) document.getElementById('ui-ldr').innerText = data.ldr;
+                if (data.temp !== undefined) {
+                    document.getElementById('ui-temp').innerText = data.temp + " °C";
+                    updateTemperatureUI(data.temp);
+                }
+                if (data.blink !== undefined && activeWidget === "FACE") {
+                    eyeLeft.classList.toggle('blinking', !!data.blink);
+                    eyeRight.classList.toggle('blinking', !!data.blink);
+                }
+            } catch (e) { }
+        }
+
         function initWebSocket() {
             let wsGateway = `ws://${window.location.hostname}/ws`;
             if (window.location.hostname === "") { wsGateway = "ws://192.168.4.1/ws"; }
+
             try {
                 ws = new WebSocket(wsGateway);
+                ws.onmessage = handleWebSocketMessage;
+
                 ws.onopen = function () {
                     wsStatusBadge.innerText = "LIVE";
                     wsStatusBadge.classList.add('ws-connected');
                     sendCmd("CLIENT_CONNECTED");
                 };
+
                 ws.onclose = function () {
                     wsStatusBadge.innerText = "OFF";
                     wsStatusBadge.classList.remove('ws-connected');
-                    setTimeout(initWebSocket, 2000);
+                    if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+                    wsReconnectTimer = setTimeout(initWebSocket, 2000);
                 };
-            } catch (e) { }
+
+                if (wsHeartbeatTimer) clearInterval(wsHeartbeatTimer);
+                wsHeartbeatTimer = setInterval(() => {
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send("HEARTBEAT");
+                    }
+                }, 500);
+            } catch (e) {
+                if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+                wsReconnectTimer = setTimeout(initWebSocket, 2000);
+            }
         }
 
         document.addEventListener('click', function (e) {
@@ -1328,7 +1375,7 @@
                 const camFrame = document.getElementById('cam-web-frame');
                 if (camContainer && camFrame) {
                     camContainer.style.display = "flex";
-                    camFrame.src = "https://cmadushan2009-stack.github.io/information/";
+                    camFrame.src ="https://cmadushan2009-stack.github.io/information/";
                 }
             }
 
@@ -1339,7 +1386,7 @@
         function updateDateTime() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
-            const dateStr = now.toISOString().split('T')[0];
+            const dateStr = now.toLocaleDateString('sv-SE');
 
             liveTimeDisplay.innerText = timeStr;
             liveDateDisplay.innerText = dateStr;
@@ -1400,6 +1447,16 @@
         function initSelectedMode(mode) {
             currentSystemMode = mode;
             startModeModal.classList.remove('show-modal');
+
+            // Mode change කරන හැම වෙලාවකම controls zero කරලා නවතින්න
+            slider.value = 0;
+            steerSlider.value = 0;
+            currentThrottleY = 0;
+            currentSteerX = 0;
+            updateEyePosition();
+            sendCmd("SPEED_0");
+            sendCmd("STEER_0");
+
             if (mode === 'RC') {
                 rcControls.style.display = "flex";
                 autoScreen.style.display = "none";
@@ -1512,40 +1569,6 @@
         window.onload = function () {
             initWebSocket();
             updateTemperatureUI(34);
-
-            ws.onmessage = function (event) {
-                if (event.data.startsWith("ALERT_")) {
-                    showToast(event.data.substring(6));
-                    return;
-                }
-
-                if (event.data.startsWith("LIGHT_STATE_")) {
-                    let st = event.data.substring(12) === "1";
-                    updateLightUIState(st);
-                    return;
-                }
-
-                try {
-                    let data = JSON.parse(event.data);
-
-                    if (data.dist !== undefined) document.getElementById('ui-dist').innerText = data.dist + " cm";
-                    if (data.wifi !== undefined) document.getElementById('wifi-signal-text').innerText = data.wifi + "%";
-                    if (data.ldr !== undefined) document.getElementById('ui-ldr').innerText = data.ldr;
-                    if (data.temp !== undefined) {
-                        document.getElementById('ui-temp').innerText = data.temp + " °C";
-                        updateTemperatureUI(data.temp);
-                    }
-                    if (data.blink !== undefined && activeWidget === "FACE") {
-                        if (data.blink) {
-                            eyeLeft.classList.add('blinking');
-                            eyeRight.classList.add('blinking');
-                        } else {
-                            eyeLeft.classList.remove('blinking');
-                            eyeRight.classList.remove('blinking');
-                        }
-                    }
-                } catch (e) { }
-            };
         };
 
         let isJoystickActive = false; // 🕹️ බටන් එකේ Active/Inactive තත්ත්වය
@@ -1568,5 +1591,4 @@
         }
     </script>
 </body>
-
-</html>
+</html> 
