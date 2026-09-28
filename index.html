@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dynamic RC Cyber Dashboard</title>
+    <style>
+        :root {
+            --primary-glow: #00f2fe;
+            --neon-blue: #00d2ff;
+            --neon-red: #ff0055;
+            --neon-orange: #ff9900;
+            --neon-purple: #b624ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --panel-bg: rgba(6, 10, 26, 0.95);
+            --center-box-bg: rgba(5, 10, 25, 0.6);
+        }
+
+        body {
+            background: radial-gradient(circle at center, #0f1026, #050510, #000000);
+            color: #ffffff;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            margin: 0;
+            padding: 10px 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body.nitro-active {
+            background: radial-gradient(circle at center, #3a0010, #100005, #000000);
+            animation: pulseBg 1s infinite alternate;
+        }
+
+        @keyframes pulseBg {
+            0% {
+                background-color: #000000;
+            }
+
+            100% {
+                background-color: #120004;
+            }
+        }
+
+        .top-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 15, 30, 0.6);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            z-index: 10;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .status-left {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--glass-bg);
+            padding: 3px 8px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .status-item.temp-hot {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+            background: rgba(255, 50, 0, 0.15);
+        }
+
+        .status-item.temp-cold {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 200, 255, 0.15);
+        }
+
+        .temp-sun-icon {
+            display: none;
+            animation: spinSun 4s linear infinite;
+        }
+
+        .temp-snow-icon {
+            display: none;
+            animation: snowFlake 1.5s infinite linear;
+        }
+
+        .temp-hot .temp-sun-icon {
+            display: inline-block;
+        }
+
+        .temp-cold .temp-snow-icon {
+            display: inline-block;
+        }
+
+        @keyframes spinSun {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1.2);
+            }
+
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        @keyframes snowFlake {
+            0% {
+                transform: translateY(-3px);
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(3px);
+                opacity: 0.3;
+            }
+        }
+
+        .horn-status-box.active-horn,
+        .signal-status-box.active-signal {
+            display: flex !important;
+            animation: flashBadge 0.4s infinite alternate;
+        }
+
+        @keyframes flashBadge {
+            0% {
+                opacity: 0.3;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.05);
+                box-shadow: 0 0 12px var(--neon-orange);
+            }
+        }
+
+        .bulb-status-box,
+        .rgb-status-box,
+        .horn-status-box,
+        .signal-status-box {
+            display: none;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .ws-status-badge {
+            font-size: 8px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 15px;
+            background: rgba(255, 0, 85, 0.15);
+            color: var(--neon-red);
+            border: 1px solid rgba(255, 0, 85, 0.3);
+        }
+
+        .ws-connected {
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--primary-glow);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .status-gear {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            padding: 2px;
+            transition: transform 1s ease;
+        }
+
+        .status-gear:hover {
+            transform: rotate(360deg);
+            color: var(--primary-glow);
+        }
+
+        .settings-dropdown-panel {
+            position: absolute;
+            top: 45px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--panel-bg);
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            backdrop-filter: blur(30px);
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.3s ease;
+            width: 180px;
+            z-index: 100;
+        }
+
+        .settings-dropdown-panel.show-panel {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .panel-label {
+            font-size: 8px;
+            font-weight: 800;
+        }
+
+        .horizontal-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+        }
+
+        .horizontal-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            border: 1px solid #ffffff;
+        }
+
+        .color-picker-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .advanced-picker {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 22px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .advanced-picker::-webkit-color-swatch {
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .settings-btn {
+            background: rgba(0, 242, 254, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: var(--primary-glow);
+            padding: 6px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 9px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .auto-a-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .auto-a-btn.a-active {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: var(--primary-glow);
+            color: var(--primary-glow);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show-modal {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: rgba(10, 15, 30, 0.95);
+            border: 1px solid var(--primary-glow);
+            border-radius: 18px;
+            padding: 22px;
+            width: 85%;
+            max-width: 310px;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.35);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary-glow);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .modal-option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-option-btn:active {
+            background: rgba(0, 242, 254, 0.2);
+            border-color: var(--primary-glow);
+            transform: scale(0.97);
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--primary-glow);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 12px;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+        }
+
+        .auto-mode-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            gap: 15px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid var(--glass-border);
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+
+        .horn-btn,
+        .park-btn,
+        .light-main-btn,
+        .rgb-toggle-btn,
+        .signal-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .horn-btn {
+            color: var(--neon-blue);
+            border-color: rgba(0, 210, 255, 0.2);
+        }
+
+        .horn-btn.active {
+            background: linear-gradient(135deg, #00f2fe, #00d2ff) !important;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.6) !important;
+            color: #000;
+        }
+
+        .nitro-btn {
+            font-size: 18px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 0, 85, 0.02);
+            border-color: rgba(255, 0, 85, 0.15);
+            color: var(--neon-red);
+        }
+
+        .nitro-btn.active {
+            background: linear-gradient(135deg, #ff0055, #ff5e00) !important;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.7) !important;
+            color: #fff;
+        }
+
+        .park-btn {
+            background: rgba(255, 153, 0, 0.02);
+            border-color: rgba(255, 153, 0, 0.15);
+            color: var(--neon-orange);
+        }
+
+        .park-active {
+            background: linear-gradient(135deg, #ff9900, #ff5500) !important;
+            box-shadow: 0 0 12px rgba(255, 153, 0, 0.6) !important;
+            color: #fff;
+        }
+
+        .light-main-btn {
+            color: #ffe600;
+            border-color: rgba(255, 230, 0, 0.15);
+        }
+
+        .light-active {
+            background: linear-gradient(135deg, #ffe600, #ff9900) !important;
+            box-shadow: 0 0 12px rgba(255, 230, 0, 0.6) !important;
+            color: #000;
+        }
+
+        .rgb-toggle-btn {
+            color: var(--neon-purple);
+            border-color: rgba(182, 36, 255, 0.15);
+        }
+
+        .rgb-active {
+            background: linear-gradient(135deg, #b624ff, #8000ff) !important;
+            box-shadow: 0 0 12px rgba(182, 36, 255, 0.6) !important;
+            color: #fff;
+        }
+
+        .signal-btn {
+            color: var(--neon-orange);
+            border-color: rgba(255, 153, 0, 0.2);
+            font-size: 16px;
+        }
+
+        .signal-active {
+            background: linear-gradient(135deg, #ff9900, #ff5500) !important;
+            box-shadow: 0 0 12px rgba(255, 153, 0, 0.6) !important;
+            color: #fff;
+        }
+
+        .slider-container-vertical {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 160px;
+            width: 42px;
+            background: rgba(5, 5, 15, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .slider-container-horizontal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 42px;
+            width: 210px;
+            background: rgba(5, 5, 15, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 0 8px;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .vertical-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 140px;
+            height: 30px;
+            background: transparent;
+            transform: rotate(-90deg);
+            outline: none;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        .horizontal-steer-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 30px;
+            background: transparent;
+            outline: none;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        .vertical-slider::-webkit-slider-thumb,
+        .horizontal-steer-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #ffffff, var(--primary-glow));
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+            border: 1.5px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .center-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32vw;
+            height: 32vw;
+            max-width: 220px;
+            max-height: 220px;
+            background: var(--center-box-bg);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: inset 0 0 15px rgba(0, 210, 255, 0.15), 0 0 20px rgba(0, 0, 0, 0.8);
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* center-box එක Smooth ලෙස විශාල වී වම් පැත්තට මාරු වීමට */
+        .center-box {
+            transition: all 0.4s ease !important;
+        }
+
+        /* Cam Mode එකේදී කොටුව විශාල වී පොඩ්ඩක් වම් පැත්තට මාරු වීම */
+        .center-box.expanded {
+            width: 53.33vw !important;
+            height: 40vw !important;
+            max-width: 533px !important;
+            max-height: 400px !important;
+            left: 40% !important;
+            /* 👈 මෙතැනින් කොටුව වම් පැත්තට (Left) තල්ලු වේ */
+            padding: 0 !important;
+            /* 👈 මෙයින් ඇතුළත තිබෙන 10px හිස් ඉඩ සම්පූර්ණයෙන්ම නැති වේ */
+        }
+
+        .center-box:hover {
+            border-color: var(--primary-glow);
+            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.3), 0 0 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .cyber-face {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            pointer-events: none;
+        }
+
+        .eyes-wrapper {
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eye {
+            width: 44px;
+            height: 44px;
+            background: var(--center-box-bg);
+            border: 2px solid var(--neon-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 12px rgba(0, 210, 255, 0.4), inset 0 0 8px rgba(0, 210, 255, 0.3);
+            transition: transform 0.1s ease;
+        }
+
+        .eye.blinking {
+            transform: scaleY(0.08) !important;
+        }
+
+        .iris {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #00d2ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 10px #00d2ff;
+            transition: transform 0.1s ease-out;
+        }
+
+        .pupil {
+            width: 10px;
+            height: 10px;
+            background: #051020;
+            border-radius: 50%;
+            box-shadow: inset 0 0 3px #000000;
+        }
+
+        .cyber-mouth {
+            width: 32px;
+            height: 8px;
+            border-bottom: 3px solid var(--neon-blue);
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 3px 8px rgba(0, 210, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .date-time-widget {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .time-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary-glow);
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
+            font-family: monospace;
+        }
+
+        .date-text {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .text-widget-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            pointer-events: none;
+        }
+
+        .custom-text-display {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--neon-orange);
+            text-shadow: 0 0 10px rgba(255, 153, 0, 0.8);
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .marquee-active {
+            position: absolute;
+            animation: marqueeAnim 7s linear infinite;
+        }
+
+        @keyframes marqueeAnim {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .sensor-widget-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sensor-card-ui {
+            font-size: 11px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            color: var(--primary-glow);
+            font-family: monospace;
+        }
+
+        .sensor-card-ui span {
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .game-controls {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            flex: 1;
+            padding: 0 15px;
+            position: relative;
+        }
+
+        .left-controls-group,
+        .right-controls-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 242, 254, 0.9);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        @media (orientation: portrait) {
+            .game-controls {
+                flex-direction: column;
+                gap: 20px;
+                justify-content: center;
+            }
+
+            .center-box {
+                width: 40vw;
+                height: 40vw;
+            }
+        }
+    </style>
+</head>
+
+<body id="main-bg">
+
+    <div class="toast-msg" id="toast-box">Alert Message</div>
+
+    <div class="modal-overlay show-modal" id="start-mode-modal">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-title">Select System Mode</div>
+            <div class="modal-option-btn" onclick="initSelectedMode('RC')">🎮 RC Car Mode</div>
+            <div class="modal-option-btn" onclick="initSelectedMode('AUTO')">🤖 Auto Mode</div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="widget-modal" onclick="closeWidgetModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <span class="modal-close-btn" onclick="closeWidgetModal()">✖</span>
+            <div class="modal-title">🔮 Select Widget</div>
+
+            <div class="modal-option-btn" onclick="activateWidget('FACE')">🤖 Cyber Face Widget
+            </div>
+            <div class="modal-option-btn" onclick="activateWidget('DATETIME')">📅 Date & Time Widget
+            </div>
+            <div class="modal-option-btn" onclick="showTextInputField()">💬 Custom Text Widget</div>
+            <div class="modal-option-btn" onclick="activateWidget('SENSOR')">📡 Sensor Data Widget
+            </div>
+            <div class="modal-option-btn" onclick="activateWidget('CAM')">📷 Cam Mode</div>
+
+            <div id="text-input-box" style="display: none; flex-direction: column; gap: 8px; margin-top: 5px;">
+                <input type="text" id="user-custom-text" class="modal-input" placeholder="Type text here..."
+                    maxlength="100">
+                <div class="modal-option-btn" style="background: var(--primary-glow); color: #000;"
+                    onclick="submitCustomTextWidget()">
+                    🚀 Apply (30 Seconds)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-status" id="top-status-bar">
+        <div class="status-left">
+            <div id="sys-mode-display" style="font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: 0.5px;">🎮
+                RC
+                CAR MODE</div>
+            <div class="status-item"><span id="ws-status" class="ws-status-badge">DISCONNECTED</span></div>
+
+            <div class="status-item" id="temp-box">
+                <span class="temp-snow-icon">❄️</span>
+                <span class="temp-sun-icon">☀️</span>
+                <span id="temp-icon">🌡️</span>
+                <span id="temp-display" style="color:var(--neon-orange); font-weight:bold;">34°C</span>
+            </div>
+
+            <div class="status-item" id="bat-box"><span id="bat-icon">🔋</span> <span id="bat-display"
+                    style="color:var(--primary-glow); font-weight:bold;">85%</span>
+            </div>
+            <div class="status-item" id="wifi-signal-box"><span> 📶 </span><span id="wifi-signal-text"
+                    style="color:var(--primary-glow); font-weight:bold;">100%</span></div>
+            <div class="status-item horn-status-box" id="horn-alert-container"><span>🔊</span> <span
+                    style="color: var(--primary-glow); font-weight:bold;">HORN</span></div>
+            <div class="status-item signal-status-box" id="signal-status-container"><span>🚨</span>
+                <span id="signal-status-text" style="color: var(--neon-orange); font-weight:bold;">SIGNAL</span>
+            </div>
+            <div class="status-item bulb-status-box" id="bulb-container"><span>💡</span> <span id="led-display"
+                    style="color: #ffe600; font-weight:bold;">LED: 100%</span>
+            </div>
+            <div class="status-item rgb-status-box" id="rgb-container"><span>✨</span> <span id="rgb-display"
+                    style="color: var(--neon-purple); font-weight:bold;">RGB
+                    ON</span></div>
+
+            <div class="status-item" id="spd-box"><span
+                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">SPD:</span>
+                <span id="speed-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
+            </div>
+            <div class="status-item" id="str-box"><span
+                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">STR:</span>
+                <span id="steer-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="status-gear" title="Information"
+                onclick="window.open('https://cmadushan2009-stack.github.io/information/', '_blank')">ⓘ</div>
+            <div class="status-gear" id="gear-btn" onclick="toggleSettingsPanel(event)">⚙️</div>
+        </div>
+    </div>
+
+    <div class="settings-dropdown-panel" id="settings-panel" onclick="event.stopPropagation()">
+        <div class="auto-a-btn" id="auto-a-toggle" onclick="toggleAutoAButton()">
+            <span>🅰️ AUTO LIGHT (LDR)</span>
+            <span id="auto-a-status">OFF</span>
+        </div>
+        <!-- ➕ මෙතැනට Auto Arrow Light බොත්තම එකතු කරන්න -->
+        <div class="auto-a-btn" id="auto-arrow-toggle" onclick="toggleAutoArrowButton()" style="margin-top: 5px;">
+            <span>↪️ AUTO ARROW LIGHT</span>
+            <span id="auto-arrow-status">OFF</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="panel-label" style="color: #ffe600;">☀️ HEADLIGHT BRIGHTNESS</div>
+            <input type="range" min="0" max="100" value="100" class="horizontal-slider" id="headlight-slider"
+                oninput="updateHeadlightBrightness(this.value)">
+        </div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0;">
+        <div class="color-picker-row">
+            <div class="panel-label" style="color: var(--neon-purple);">✨ CAR RGB COLOR</div>
+            <input type="color" id="adv-color-picker" class="advanced-picker" value="#ffffff"
+                oninput="pickCarColor(this.value)">
+        </div>
+        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="settings-btn" id="mode-btn" onclick="reopenModeModal()">⚡ MODE SELECT</div>
+            <div class="settings-btn" onclick="toggleFullScreen()">🖥️ FULLSCREEN MODE</div>
+        </div>
+    </div>
+
+    <div class="auto-mode-screen" id="auto-screen">
+        <div style="font-size: 40px;">🤖</div>
+        <div>AUTO MODE ACTIVE</div>
+    </div>
+
+    <div class="game-controls" id="rc-controls">
+        <div class="left-controls-group">
+            <div class="glass-btn nitro-btn" id="btn-nitro">🔥</div>
+            <div class="slider-container-vertical">
+                <input type="range" min="-100" max="100" value="0" class="vertical-slider" id="throttle-slider"
+                    oninput="updateSlider(this.value)">
+            </div>
+        </div>
+
+        <div class="center-box" onclick="openWidgetModal(event)">
+            <div class="cyber-face" id="widget-cyber-face">
+                <div class="eyes-wrapper">
+                    <div class="eye" id="eye-left">
+                        <div class="iris" id="iris-left">
+                            <div class="pupil"></div>
+                        </div>
+                    </div>
+                    <div class="eye" id="eye-right">
+                        <div class="iris" id="iris-right">
+                            <div class="pupil"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cyber-mouth" id="bot-mouth"></div>
+            </div>
+
+            <div class="date-time-widget" id="widget-datetime">
+                <div class="time-text" id="live-time-display">00:00:00</div>
+                <div class="date-text" id="live-date-display">2026-01-01</div>
+            </div>
+
+            <div class="text-widget-container" id="widget-text-container">
+                <div class="custom-text-display" id="custom-text-element">HELLO</div>
+            </div>
+
+            <div class="sensor-widget-container" id="widget-sensor-container">
+                <div class="sensor-card-ui">
+                    <div>📏 DIST : <span id="ui-dist">0.0 cm</span></div>
+                    <div>☀️ LDR : <span id="ui-ldr">0</span></div>
+                    <div>🌡️ TEMP : <span id="ui-temp">0 °C</span></div>
+                    <div>⚡ SPD : <span id="ui-speed">0%</span></div>
+                    <div>🎯 STR : <span id="ui-steer">0%</span></div>
+                </div>
+            </div>
+            <!-- ➕ Cam Mode එක සඳහා Full Fit iframe එක පමණක් -->
+            <div id="widget-cam-container"
+                style="display: none; width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;">
+                <iframe id="cam-web-frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+
+        <div class="right-controls-group">
+
+            <!-- Steering Slider -->
+            <div class="slider-container-horizontal">
+                <input type="range" min="-100" max="100" value="0" class="horizontal-steer-slider" id="steer-slider"
+                    oninput="updateSteerSlider(this.value)">
+            </div>
+
+            <!-- උඩ පේළිය: Light, Horn, RGB, Park බටන් -->
+            <div class="button-row">
+                <div class="glass-btn light-main-btn" id="light-btn">🔅</div>
+                <div class="glass-btn horn-btn" id="btn-horn">🔊</div>
+                <div class="glass-btn rgb-toggle-btn" id="rgb-toggle-btn" onclick="toggleRGB()">✨
+                </div>
+                <div class="glass-btn park-btn" id="btn-park" onclick="toggleParkMode()">🛑</div>
+            </div>
+
+            <!-- ඊට පහළින් ඇති පේළිය: Signal Arrow බටන් දෙක ( Left ◀ සහ ▶ Right ) -->
+            <div class="button-row" id="signal-btn-row">
+                <div class="glass-btn signal-btn" id="btn-signal-l" onclick="toggleSignal('L')">◀
+                </div>
+                <div class="glass-btn signal-btn" id="btn-signal-r" onclick="toggleSignal('R')">▶
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const slider = document.getElementById('throttle-slider');
+        const steerSlider = document.getElementById('steer-slider');
+        const speedDisplay = document.getElementById('speed-display');
+        const steerDisplay = document.getElementById('steer-display');
+        const sysModeDisplay = document.getElementById('sys-mode-display');
+
+        const settingsPanel = document.getElementById('settings-panel');
+        const gearBtn = document.getElementById('gear-btn');
+        const rgbToggleBtn = document.getElementById('rgb-toggle-btn');
+        const wsStatusBadge = document.getElementById('ws-status');
+
+        const startModeModal = document.getElementById('start-mode-modal');
+        const widgetModal = document.getElementById('widget-modal');
+        const textInputBox = document.getElementById('text-input-box');
+
+        const rcControls = document.getElementById('rc-controls');
+        const autoScreen = document.getElementById('auto-screen');
+
+        const tempBox = document.getElementById('temp-box');
+        const tempDisplay = document.getElementById('temp-display');
+
+        const widgetFace = document.getElementById('widget-cyber-face');
+        const widgetDateTime = document.getElementById('widget-datetime');
+        const widgetTextContainer = document.getElementById('widget-text-container');
+        const widgetSensorContainer = document.getElementById('widget-sensor-container');
+
+        const customTextElement = document.getElementById('custom-text-element');
+        const liveTimeDisplay = document.getElementById('live-time-display');
+        const liveDateDisplay = document.getElementById('live-date-display');
+
+        const eyeLeft = document.getElementById('eye-left');
+        const eyeRight = document.getElementById('eye-right');
+        const irisLeft = document.getElementById('iris-left');
+        const irisRight = document.getElementById('iris-right');
+
+        const bulbContainer = document.getElementById('bulb-container');
+        const ledDisplay = document.getElementById('led-display');
+        const rgbContainer = document.getElementById('rgb-container');
+        const hornAlertContainer = document.getElementById('horn-alert-container');
+        const signalStatusContainer = document.getElementById('signal-status-container');
+        const signalStatusText = document.getElementById('signal-status-text');
+        const lightBtn = document.getElementById('light-btn');
+        const parkBtn = document.getElementById('btn-park');
+        const signalLBtn = document.getElementById('btn-signal-l');
+        const signalRBtn = document.getElementById('btn-signal-r');
+        const bodyBg = document.getElementById('main-bg');
+        const toastBox = document.getElementById('toast-box');
+
+        const autoAToggle = document.getElementById('auto-a-toggle');
+        const autoAStatus = document.getElementById('auto-a-status');
+        let isAutoAEnabled = false;
+
+        // ➕ අලුතින් එකතු කළ Auto Arrow Light Variables & Function
+        const autoArrowToggle = document.getElementById('auto-arrow-toggle');
+        const autoArrowStatus = document.getElementById('auto-arrow-status');
+        const signalBtnRow = document.getElementById('signal-btn-row');
+        let isAutoArrowEnabled = false;
+
+        function toggleAutoArrowButton() {
+            isAutoArrowEnabled = !isAutoArrowEnabled;
+            if (isAutoArrowEnabled) {
+                autoArrowToggle.classList.add('a-active');
+                autoArrowStatus.innerText = "ON";
+
+                // Signal එකක් ON වී තිබුනොත් එය OFF කිරීම
+                if (activeSignal !== null) {
+                    toggleSignal(activeSignal);
+                }
+
+                // Arrow light buttons Hide කිරීම
+                if (signalBtnRow) signalBtnRow.style.display = "none";
+
+            } else {
+                autoArrowToggle.classList.remove('a-active');
+                autoArrowStatus.innerText = "OFF";
+
+                // Arrow light buttons නැවත Show කිරීම
+                if (signalBtnRow) signalBtnRow.style.display = "flex";
+            }
+            sendCmd("TOGGLE_AUTO_ARROW");
+        }
+
+        let currentSteerX = 0;
+        let currentThrottleY = 0;
+        let activeWidget = "FACE";
+        let textTimer = null;
+        let dateTimeInterval = null;
+
+        let isLightOn = false;
+        let isParkMode = false;
+        let isRGBOn = false;
+        let activeSignal = null;
+        let currentSystemMode = "RC";
+
+        function showToast(msg) {
+            toastBox.innerText = msg;
+            toastBox.style.opacity = '1';
+            setTimeout(() => { toastBox.style.opacity = '0'; }, 2500);
+        }
+
+        function triggerHapticFeedback() {
+            if (navigator.vibrate) { navigator.vibrate(45); }
+        }
+
+        let ws;
+        function initWebSocket() {
+            let wsGateway = `ws://${window.location.hostname}/ws`;
+            if (window.location.hostname === "") { wsGateway = "ws://192.168.4.1/ws"; }
+            try {
+                ws = new WebSocket(wsGateway);
+                ws.onopen = function () {
+                    wsStatusBadge.innerText = "LIVE";
+                    wsStatusBadge.classList.add('ws-connected');
+                    sendCmd("CLIENT_CONNECTED");
+                };
+                ws.onclose = function () {
+                    wsStatusBadge.innerText = "OFF";
+                    wsStatusBadge.classList.remove('ws-connected');
+                    setTimeout(initWebSocket, 2000);
+                };
+            } catch (e) { }
+        }
+
+        document.addEventListener('click', function (e) {
+            if (settingsPanel.classList.contains('show-panel') && !settingsPanel.contains(e.target) && !gearBtn.contains(e.target)) {
+                settingsPanel.classList.remove('show-panel');
+            }
+        });
+
+        function toggleSettingsPanel(e) {
+            if (e) e.stopPropagation();
+            settingsPanel.classList.toggle('show-panel');
+        }
+
+        function reopenModeModal() {
+            settingsPanel.classList.remove('show-panel');
+            startModeModal.classList.add('show-modal');
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => { });
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+            settingsPanel.classList.remove('show-panel');
+        }
+
+        function toggleAutoAButton() {
+            isAutoAEnabled = !isAutoAEnabled;
+            if (isAutoAEnabled) {
+                autoAToggle.classList.add('a-active');
+                autoAStatus.innerText = "ON";
+
+                // ➕ Manual Light එක කලින් On කර තිබුණ නම් එය Off කිරීම
+                if (isLightOn) {
+                    toggleHeadlight();
+                }
+
+                // Manual Headlight බටන් එක Hide කිරීම
+                if (lightBtn) {
+                    lightBtn.style.display = "none";
+                }
+            } else {
+                autoAToggle.classList.remove('a-active');
+                autoAStatus.innerText = "OFF";
+
+                // Manual Headlight බටන් එක නැවත පෙන්වීම
+                if (lightBtn) {
+                    lightBtn.style.display = "flex";
+                }
+            }
+            sendCmd("TOGGLE_AUTO_LDR");
+        }
+
+        function updateHeadlightBrightness(val) {
+            let pct = Math.round((val / 100) * 100);
+            ledDisplay.innerText = "LED: " + pct + "%";
+            sendCmd("HEADLIGHT_BRIGHTNESS_" + val);
+        }
+
+        function pickCarColor(colorHex) {
+            sendCmd("RGB_COLOR_" + colorHex.replace('#', ''));
+        }
+
+        let lightBtnPressTimer = null;
+        let isLongPress = false;
+
+        function handleLightPressStart(e) {
+            if (e) e.preventDefault();
+            isLongPress = false;
+            lightBtnPressTimer = setTimeout(() => {
+                isLongPress = true;
+                toggleAutoAButton();
+                triggerHapticFeedback();
+            }, 3000);
+        }
+
+        function handleLightPressEnd(e) {
+            if (e) e.preventDefault();
+            clearTimeout(lightBtnPressTimer);
+            if (!isLongPress) {
+                toggleHeadlight();
+            }
+        }
+
+        lightBtn.addEventListener('touchstart', handleLightPressStart, { passive: false });
+        lightBtn.addEventListener('touchend', handleLightPressEnd, { passive: false });
+        lightBtn.addEventListener('mousedown', handleLightPressStart);
+        lightBtn.addEventListener('mouseup', handleLightPressEnd);
+
+        function toggleHeadlight() {
+            isLightOn = !isLightOn;
+            updateLightUIState(isLightOn);
+            if (isLightOn) {
+                sendCmd("LIGHT_ON");
+            } else {
+                sendCmd("LIGHT_OFF");
+            }
+        }
+
+        function updateLightUIState(state) {
+            isLightOn = state;
+            if (isLightOn) {
+                lightBtn.classList.add('light-active');
+                bulbContainer.style.display = 'flex';
+            } else {
+                lightBtn.classList.remove('light-active');
+                bulbContainer.style.display = 'none';
+            }
+        }
+
+        function toggleRGB() {
+            isRGBOn = !isRGBOn;
+            if (isRGBOn) {
+                rgbToggleBtn.classList.add('rgb-active');
+                rgbContainer.style.display = 'flex';
+                sendCmd("RGB_ON");
+            } else {
+                rgbToggleBtn.classList.remove('rgb-active');
+                rgbContainer.style.display = 'none';
+                sendCmd("RGB_OFF");
+            }
+        }
+
+        function toggleParkMode() {
+            isParkMode = !isParkMode;
+            if (isParkMode) {
+                parkBtn.classList.add('park-active');
+                resetSlider();
+                resetSteerSlider();
+                sendCmd("PARK_ON");
+            } else {
+                parkBtn.classList.remove('park-active');
+                sendCmd("PARK_OFF");
+            }
+        }
+
+        function toggleSignal(dir) {
+            if (activeSignal === dir) {
+                activeSignal = null;
+                if (signalLBtn) signalLBtn.classList.remove('signal-active');
+                if (signalRBtn) signalRBtn.classList.remove('signal-active');
+                if (signalStatusContainer) signalStatusContainer.classList.remove('active-signal');
+                sendCmd("SIGNAL_OFF");
+            } else {
+                activeSignal = dir;
+                if (signalLBtn) signalLBtn.classList.toggle('signal-active', dir === 'L');
+                if (signalRBtn) signalRBtn.classList.toggle('signal-active', dir === 'R');
+                if (signalStatusText) signalStatusText.innerText = dir === 'L' ? "L-SIGNAL" : "R-SIGNAL";
+                if (signalStatusContainer) signalStatusContainer.classList.add('active-signal');
+                sendCmd("SIGNAL_" + dir);
+            }
+        }
+
+        function openWidgetModal(e) {
+            if (e) e.stopPropagation();
+            widgetModal.classList.add('show-modal');
+            textInputBox.style.display = "none";
+        }
+
+        function closeWidgetModal() {
+            widgetModal.classList.remove('show-modal');
+        }
+
+        function showTextInputField() {
+            textInputBox.style.display = "flex";
+        }
+
+        function activateWidget(type) {
+            activeWidget = type;
+
+            widgetFace.style.display = "none";
+            widgetDateTime.style.display = "none";
+            widgetTextContainer.style.display = "none";
+            widgetSensorContainer.style.display = "none";
+
+            const camContainer = document.getElementById('widget-cam-container');
+            if (camContainer) camContainer.style.display = "none";
+
+            if (dateTimeInterval) clearInterval(dateTimeInterval);
+            if (textTimer) clearTimeout(textTimer);
+
+            const centerBox = document.querySelector('.center-box');
+
+            if (type === 'FACE') {
+                widgetFace.style.display = "flex";
+                if (centerBox) centerBox.classList.remove('expanded');
+            } else if (type === 'DATETIME') {
+                widgetDateTime.style.display = "flex";
+                updateDateTime();
+                dateTimeInterval = setInterval(updateDateTime, 1000);
+                if (centerBox) centerBox.classList.remove('expanded');
+            } else if (type === 'SENSOR') {
+                widgetSensorContainer.style.display = "flex";
+                if (centerBox) centerBox.classList.remove('expanded');
+            } else if (type === 'CAM') {
+                if (centerBox) centerBox.classList.add('expanded');
+
+                const camFrame = document.getElementById('cam-web-frame');
+                if (camContainer && camFrame) {
+                    camContainer.style.display = "flex";
+
+                    // 👇 මෙතැනට ඔබගේ ESP32-CAM එකේ IP එක හෝ URL එක ලබාදෙන්න
+                    camFrame.src = "http://192.168.4.2";
+                }
+            }
+
+            sendCmd("WIDGET_" + type);
+            closeWidgetModal();
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            const dateStr = now.toISOString().split('T')[0];
+
+            liveTimeDisplay.innerText = timeStr;
+            liveDateDisplay.innerText = dateStr;
+
+            if (activeWidget === 'DATETIME') {
+                sendCmd("DATETIME_" + timeStr + "_" + dateStr);
+            }
+        }
+
+        function submitCustomTextWidget() {
+            const userText = document.getElementById('user-custom-text').value.trim();
+            if (!userText) return;
+
+            activeWidget = "TEXT";
+            widgetFace.style.display = "none";
+            widgetDateTime.style.display = "none";
+            widgetSensorContainer.style.display = "none";
+            widgetTextContainer.style.display = "flex";
+
+            customTextElement.innerText = userText;
+            customTextElement.classList.remove('marquee-active');
+
+            const parentWidth = document.querySelector('.center-box').clientWidth - 20;
+            if (customTextElement.scrollWidth > parentWidth) {
+                customTextElement.classList.add('marquee-active');
+            }
+
+            sendCmd("CUSTOM_TEXT_" + userText);
+            closeWidgetModal();
+
+            if (textTimer) clearTimeout(textTimer);
+            textTimer = setTimeout(() => {
+                activateWidget('FACE');
+            }, 30000);
+        }
+
+        function updateTemperatureUI(tempVal) {
+            tempDisplay.innerText = tempVal + "°C";
+            tempBox.classList.remove('temp-hot', 'temp-cold');
+            if (tempVal > 38) tempBox.classList.add('temp-hot');
+            else if (tempVal < 20) tempBox.classList.add('temp-cold');
+        }
+
+        function sendCmd(cmd, urgent = false) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(cmd);
+            }
+        }
+
+        function updateEyePosition() {
+            if (isParkMode || activeWidget !== "FACE") return;
+            let moveX = (currentSteerX / 100) * 8;
+            let moveY = -(currentThrottleY / 100) * 7;
+            irisLeft.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            irisRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        }
+
+        function initSelectedMode(mode) {
+            currentSystemMode = mode;
+            startModeModal.classList.remove('show-modal');
+            if (mode === 'RC') {
+                rcControls.style.display = "flex";
+                autoScreen.style.display = "none";
+                sysModeDisplay.innerText = "🎮 RC CAR MODE";
+                sendCmd("MODE_RC");
+            } else if (mode === 'AUTO') {
+                rcControls.style.display = "none";
+                autoScreen.style.display = "flex";
+                sysModeDisplay.innerText = "🤖 AUTO MODE";
+                sendCmd("MODE_AUTO");
+            }
+        }
+
+        function setupSensitiveButton(id, startCallback, endCallback, isToggle = false) {
+            let btn = document.getElementById(id);
+            if (!btn) return;
+
+            const handleStart = (e) => {
+                if (e) e.preventDefault();
+                if (!isToggle) btn.classList.add('active');
+                if (startCallback) startCallback();
+            };
+
+            const handleEnd = (e) => {
+                if (e) e.preventDefault();
+                if (!isToggle) btn.classList.remove('active');
+                if (endCallback) endCallback();
+            };
+
+            btn.addEventListener('touchstart', handleStart, { passive: false });
+            btn.addEventListener('touchend', handleEnd, { passive: false });
+            btn.addEventListener('mousedown', handleStart);
+            btn.addEventListener('mouseup', handleEnd);
+            btn.addEventListener('mouseleave', () => { if (!isToggle) btn.classList.remove('active'); });
+        }
+
+        setupSensitiveButton('btn-nitro', () => {
+            if (isParkMode) return;
+            bodyBg.classList.add('nitro-active');
+            speedDisplay.innerText = "100%";
+            slider.value = 100;
+            currentThrottleY = 100;
+            updateEyePosition();
+            sendCmd('SPEED_100', true);
+        }, () => {
+            if (isParkMode) return;
+            bodyBg.classList.remove('nitro-active');
+            resetSlider();
+        });
+
+        setupSensitiveButton('btn-horn', () => {
+            hornAlertContainer.classList.add('active-horn');
+            sendCmd('HORN_ON', true);
+        }, () => {
+            hornAlertContainer.classList.remove('active-horn');
+            sendCmd('HORN_OFF', true);
+        });
+
+        let throttleSnapped = false;
+        let steerSnapped = false;
+
+        function updateSlider(val) {
+            if (isParkMode) { slider.value = 0; speedDisplay.innerText = "0%"; return; }
+
+            let parsedVal = parseInt(val);
+
+            if (parsedVal === 0) {
+                if (!throttleSnapped) {
+                    triggerHapticFeedback();
+                    throttleSnapped = true;
+                }
+            } else {
+                throttleSnapped = false;
+            }
+
+            currentThrottleY = parsedVal;
+            speedDisplay.innerText = parsedVal + "%";
+            document.getElementById('ui-speed').innerText = parsedVal + "%";
+            updateEyePosition();
+            sendCmd("SPEED_" + parsedVal);
+        }
+
+        function updateSteerSlider(val) {
+            if (isParkMode) { steerSlider.value = 0; steerDisplay.innerText = "0%"; return; }
+
+            let parsedVal = parseInt(val);
+
+            if (parsedVal === 0) {
+                if (!steerSnapped) {
+                    triggerHapticFeedback();
+                    steerSnapped = true;
+                }
+            } else {
+                steerSnapped = false;
+            }
+
+            currentSteerX = parsedVal;
+            steerDisplay.innerText = parsedVal + "%";
+            document.getElementById('ui-steer').innerText = parsedVal + "%";
+            updateEyePosition();
+            sendCmd("STEER_" + parsedVal);
+        }
+
+        function resetSlider() { slider.value = 0; updateSlider(0); }
+        function resetSteerSlider() { steerSlider.value = 0; updateSteerSlider(0); }
+
+        slider.addEventListener('touchend', resetSlider);
+        slider.addEventListener('mouseup', resetSlider);
+        steerSlider.addEventListener('touchend', resetSteerSlider);
+        steerSlider.addEventListener('mouseup', resetSteerSlider);
+
+        window.onload = function () {
+            initWebSocket();
+            updateTemperatureUI(34);
+
+            ws.onmessage = function (event) {
+                if (event.data.startsWith("ALERT_")) {
+                    showToast(event.data.substring(6));
+                    return;
+                }
+
+                if (event.data.startsWith("LIGHT_STATE_")) {
+                    let st = event.data.substring(12) === "1";
+                    updateLightUIState(st);
+                    return;
+                }
+
+                try {
+                    let data = JSON.parse(event.data);
+
+                    if (data.dist !== undefined) document.getElementById('ui-dist').innerText = data.dist + " cm";
+                    if (data.wifi !== undefined) document.getElementById('wifi-signal-text').innerText = data.wifi + "%";
+                    if (data.ldr !== undefined) document.getElementById('ui-ldr').innerText = data.ldr;
+                    if (data.temp !== undefined) {
+                        document.getElementById('ui-temp').innerText = data.temp + " °C";
+                        updateTemperatureUI(data.temp);
+                    }
+                    if (data.blink !== undefined && activeWidget === "FACE") {
+                        if (data.blink) {
+                            eyeLeft.classList.add('blinking');
+                            eyeRight.classList.add('blinking');
+                        } else {
+                            eyeLeft.classList.remove('blinking');
+                            eyeRight.classList.remove('blinking');
+                        }
+                    }
+                } catch (e) { }
+            };
+        };
+    </script>
+</body>
+
+</html>
