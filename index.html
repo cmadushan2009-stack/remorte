@@ -614,15 +614,16 @@
             flex-wrap: wrap;
         }
 
+        /* ---------------- Center Box & Responsiveness ---------------- */
         .center-box {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 32vw;
-            height: 32vw;
-            max-width: 220px;
-            max-height: 220px;
+            width: 180px;
+            height: 180px;
+            max-width: 90vw;
+            max-height: 90vw;
             background: var(--center-box-bg);
             border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 24px;
@@ -636,15 +637,15 @@
             overflow: hidden;
             padding: 10px;
             box-sizing: border-box;
-            transition: all 4s ease;
+            transition: all 0.4s ease;
         }
 
         .center-box.expanded {
-            width: 53.33vw !important;
-            height: 40vw !important;
-            max-width: 533px !important;
-            max-height: 400px !important;
-            left: 40% !important;
+            width: 80vw !important;
+            height: 60vh !important;
+            max-width: 500px !important;
+            max-height: 380px !important;
+            left: 50% !important;
             padding: 0 !important;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
         }
@@ -841,16 +842,40 @@
             pointer-events: none;
         }
 
-        @media (orientation: portrait) {
+        /* ---------------- Media Queries for Portrait/Mobile ---------------- */
+        @media (orientation: portrait), (max-width: 600px) {
             .game-controls {
                 flex-direction: column;
-                gap: 20px;
+                gap: 15px;
                 justify-content: center;
             }
 
             .center-box {
-                width: 40vw;
-                height: 40vw;
+                position: relative;
+                top: 0;
+                left: 0;
+                transform: none;
+                width: 160px;
+                height: 160px;
+                margin: 10px auto;
+            }
+
+            .center-box.expanded {
+                left: 0 !important;
+                width: 90vw !important;
+                height: 50vh !important;
+            }
+
+            .slider-container-horizontal {
+                width: 180px;
+            }
+
+            .slider-container-vertical {
+                height: 180px;
+            }
+
+            .vertical-slider {
+                width: 165px;
             }
         }
 </style>
