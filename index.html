@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dynamic RC Cyber Dashboard</title>
-  <style>
+    <style>
         :root {
             --primary-glow: #50d3ff;
             --neon-blue: #00a8e8;
@@ -830,6 +830,8 @@
 <body id="main-bg">
     <div class="toast-msg" id="toast-box">Alert Message</div>
 
+
+
     <div class="modal-overlay show-modal" id="start-mode-modal">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="modal-title">Select System Mode</div>
@@ -859,23 +861,66 @@
         </div>
     </div>
 
+    <div class="modal-overlay" id="temp-info-modal" onclick="closeTempModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <span class="modal-close-btn" onclick="closeTempModal()">✖</span>
+            <div class="modal-title">🌡️ Temperature Details</div>
+            <div
+                style="font-size: 12px; color: #ffffff; text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <div>System Temp: <span id="pop-temp-level"
+                        style="color: var(--primary-glow); font-weight: bold;">32°C</span></div>
+                <div>Status: <span style="color: #00ff00; font-weight: bold;">NORMAL</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="battery-info-modal" onclick="closeBatteryModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <span class="modal-close-btn" onclick="closeBatteryModal()">✖</span>
+            <div class="modal-title">🔋 Battery Details</div>
+            <div
+                style="font-size: 12px; color: #ffffff; text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <div>Battery Level: <span id="pop-battery-level"
+                        style="color: var(--primary-glow); font-weight: bold;">85%</span></div>
+                <div>Power State: <span style="color: #00ff00; font-weight: bold;">BATTERY OK</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="wifi-info-modal" onclick="closeWifiModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <span class="modal-close-btn" onclick="closeWifiModal()">✖</span>
+            <div class="modal-title">📶 Wi-Fi Details</div>
+            <div
+                style="font-size: 12px; color: #ffffff; text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                <div>Signal Strength: <span id="pop-wifi-signal"
+                        style="color: var(--primary-glow); font-weight: bold;">100%</span></div>
+                <div>Status: <span style="color: #00ff00; font-weight: bold;">CONNECTED</span></div>
+            </div>
+        </div>
+    </div>
+
     <div class="top-status" id="top-status-bar">
         <div class="status-left">
             <div id="sys-mode-display" style="font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: 0.5px;">🎮
                 RC CAR MODE</div>
             <div class="status-item"><span id="ws-status" class="ws-status-badge">DISCONNECTED</span></div>
 
-            <div class="status-item" id="temp-box">
+            <div class="status-item" id="temp-box" onclick="openTempModal(event)" style="cursor: pointer;">
                 <span class="temp-snow-icon">❄️</span>
                 <span class="temp-sun-icon">☀️</span>
                 <span id="temp-icon">🌡️</span>
                 <span id="temp-display" style="color:var(--neon-orange); font-weight:bold;">34°C</span>
             </div>
 
-            <div class="status-item" id="bat-box"><span id="bat-icon">🔋</span> <span id="bat-display"
-                    style="color:var(--primary-glow); font-weight:bold;">85%</span></div>
-            <div class="status-item" id="wifi-signal-box"><span> 📶 </span><span id="wifi-signal-text"
-                    style="color:var(--primary-glow); font-weight:bold;">100%</span></div>
+            <div class="status-item" id="battery-box" onclick="openBatteryModal(event)" style="cursor: pointer;">
+                <span> 🔋 </span>
+                <span id="battery-text" style="color:var(--primary-glow); font-weight:bold;">85%</span>
+            </div>
+            <div class="status-item" id="wifi-signal-box" onclick="openWifiModal(event)" style="cursor: pointer;">
+                <span> 📶 </span>
+                <span id="wifi-signal-text" style="color:var(--primary-glow); font-weight:bold;">100%</span>
+            </div>
             <div class="status-item horn-status-box" id="horn-alert-container"><span>🔊</span> <span
                     style="color: var(--primary-glow); font-weight:bold;">HORN</span></div>
             <div class="status-item signal-status-box" id="signal-status-container"><span>🚨</span> <span
@@ -1068,26 +1113,26 @@
         const signalBtnRow = document.getElementById('signal-btn-row');
         let isAutoArrowEnabled = false;
 
-       function toggleAutoArrowButton() {
-       isAutoArrowEnabled = !isAutoArrowEnabled;
-       if (isAutoArrowEnabled) {
-        autoArrowToggle.classList.add('a-active');
-        autoArrowStatus.innerText = "ON";
-        if (activeSignal !== null) { toggleSignal(activeSignal); }
-        
-        // signalBtnRow hide නොකර Signal බටන් දෙක පමණක් hide කිරීම
-        if (signalLBtn) signalLBtn.style.display = "none";
-        if (signalRBtn) signalRBtn.style.display = "none";
-        } else {
-        autoArrowToggle.classList.remove('a-active');
-        autoArrowStatus.innerText = "OFF";
-        
-        // Auto Arrow OFF වූ විට Signal බටන් දෙක නැවත පෙන්වීම
-        if (signalLBtn) signalLBtn.style.display = "flex";
-        if (signalRBtn) signalRBtn.style.display = "flex";
+        function toggleAutoArrowButton() {
+            isAutoArrowEnabled = !isAutoArrowEnabled;
+            if (isAutoArrowEnabled) {
+                autoArrowToggle.classList.add('a-active');
+                autoArrowStatus.innerText = "ON";
+                if (activeSignal !== null) { toggleSignal(activeSignal); }
+
+                // signalBtnRow hide නොකර Signal බටන් දෙක පමණක් hide කිරීම
+                if (signalLBtn) signalLBtn.style.display = "none";
+                if (signalRBtn) signalRBtn.style.display = "none";
+            } else {
+                autoArrowToggle.classList.remove('a-active');
+                autoArrowStatus.innerText = "OFF";
+
+                // Auto Arrow OFF වූ විට Signal බටන් දෙක නැවත පෙන්වීම
+                if (signalLBtn) signalLBtn.style.display = "flex";
+                if (signalRBtn) signalRBtn.style.display = "flex";
+            }
+            sendCmd("TOGGLE_AUTO_ARROW");
         }
-        sendCmd("TOGGLE_AUTO_ARROW");
-}
 
         let currentSteerX = 0;
         let currentThrottleY = 0;
@@ -1377,7 +1422,7 @@
                 const camFrame = document.getElementById('cam-web-frame');
                 if (camContainer && camFrame) {
                     camContainer.style.display = "flex";
-                    camFrame.src ="https://cmadushan2009-stack.github.io/information/";
+                    camFrame.src = "https://cmadushan2009-stack.github.io/information/";
                 }
             }
 
@@ -1591,6 +1636,39 @@
                 if (overlay) overlay.style.display = 'block';
             }
         }
+        function openWifiModal(e) {
+            if (e) e.stopPropagation();
+            const currentSignal = document.getElementById('wifi-signal-text').innerText;
+            document.getElementById('pop-wifi-signal').innerText = currentSignal;
+            document.getElementById('wifi-info-modal').classList.add('show-modal');
+        }
+
+        function closeWifiModal() {
+            document.getElementById('wifi-info-modal').classList.remove('show-modal');
+        }
+
+        function openBatteryModal(e) {
+            if (e) e.stopPropagation();
+            const currentBatt = document.getElementById('battery-text') ? document.getElementById('battery-text').innerText : '85%';
+            document.getElementById('pop-battery-level').innerText = currentBatt;
+            document.getElementById('battery-info-modal').classList.add('show-modal');
+        }
+
+        function closeBatteryModal() {
+            document.getElementById('battery-info-modal').classList.remove('show-modal');
+        }
+
+        function openTempModal(e) {
+            if (e) e.stopPropagation();
+            const currentTemp = document.getElementById('temp-text') ? document.getElementById('temp-text').innerText : '32°C';
+            document.getElementById('pop-temp-level').innerText = currentTemp;
+            document.getElementById('temp-info-modal').classList.add('show-modal');
+        }
+
+        function closeTempModal() {
+            document.getElementById('temp-info-modal').classList.remove('show-modal');
+        }
     </script>
 </body>
-</html> 
+
+</html>
