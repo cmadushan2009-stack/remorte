@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dynamic RC Cyber Dashboard</title>
     <style>
         :root {
-            --primary-glow: #50d3ff;
-            --neon-blue: #00a8e8;
-            --neon-red: #ff3366;
-            --neon-orange: #ff9f1c;
-            --neon-purple: #9d4edd;
-            --glass-bg: rgba(255, 255, 255, 0.4);
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --panel-bg: rgba(255, 255, 255, 0.95);
-            --center-box-bg: rgba(230, 245, 250, 0.75);
+            --primary-glow: #00f2fe;
+            --neon-blue: #00d2ff;
+            --neon-red: #ff0055;
+            --neon-orange: #ff9900;
+            --neon-purple: #b624ff;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --panel-bg: rgba(6, 10, 26, 0.95);
+            --center-box-bg: rgba(5, 10, 25, 0.6);
         }
 
         body {
-            background: radial-gradient(circle at center, #d2f5f4, #e0f3f5, #ffffff);
-            color: #2b2d42;
+            background: radial-gradient(circle at center, #0f1026, #050510, #000000);
+            color: #ffffff;
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             margin: 0;
-            padding: 10px 15px;
+            padding: 10px 15px; 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -36,32 +35,27 @@
         }
 
         body.nitro-active {
-            background: radial-gradient(circle at center, #ffdde1, #ee9ca7, #ffffff);
+            background: radial-gradient(circle at center, #3a0010, #100005, #000000);
             animation: pulseBg 1s infinite alternate;
         }
 
         @keyframes pulseBg {
-            0% {
-                background-color: #ffffff;
-            }
-
-            100% {
-                background-color: #ffe6eb;
-            }
+            0% { background-color: #000000; }
+            100% { background-color: #120004; }
         }
 
         .top-status {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(10, 15, 30, 0.6);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            padding: 5px 10px;
+            padding: 5px 10px; 
             border-radius: 12px;
-            font-size: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            font-size: 10px; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
             z-index: 10;
             margin-bottom: 5px;
             transition: all 0.3s ease;
@@ -79,9 +73,9 @@
             align-items: center;
             gap: 4px;
             background: var(--glass-bg);
-            padding: 3px 8px;
+            padding: 3px 8px; 
             border-radius: 15px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.02);
             font-weight: 500;
             position: relative;
             overflow: hidden;
@@ -90,87 +84,45 @@
 
         .status-item.temp-hot {
             border-color: var(--neon-red);
-            box-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
-            background: rgba(255, 51, 102, 0.15);
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.4);
+            background: rgba(255, 50, 0, 0.15);
         }
 
         .status-item.temp-cold {
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 10px rgba(80, 211, 255, 0.4);
-            background: rgba(80, 211, 255, 0.15);
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            background: rgba(0, 200, 255, 0.15);
         }
 
-        .temp-sun-icon {
-            display: none;
-            animation: spinSun 4s linear infinite;
-        }
+        .temp-sun-icon { display: none; animation: spinSun 4s linear infinite; }
+        .temp-snow-icon { display: none; animation: snowFlake 1.5s infinite linear; }
 
-        .temp-snow-icon {
-            display: none;
-            animation: snowFlake 1.5s infinite linear;
-        }
-
-        .temp-hot .temp-sun-icon {
-            display: inline-block;
-        }
-
-        .temp-cold .temp-snow-icon {
-            display: inline-block;
-        }
+        .temp-hot .temp-sun-icon { display: inline-block; }
+        .temp-cold .temp-snow-icon { display: inline-block; }
 
         @keyframes spinSun {
-            0% {
-                transform: rotate(0deg) scale(1);
-            }
-
-            50% {
-                transform: rotate(180deg) scale(1.2);
-            }
-
-            100% {
-                transform: rotate(360deg) scale(1);
-            }
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
         }
 
         @keyframes snowFlake {
-            0% {
-                transform: translateY(-3px);
-                opacity: 0.3;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(3px);
-                opacity: 0.3;
-            }
+            0% { transform: translateY(-3px); opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { transform: translateY(3px); opacity: 0.3; }
         }
 
-        .horn-status-box.active-horn,
-        .signal-status-box.active-signal {
+        .horn-status-box.active-horn, .signal-status-box.active-signal {
             display: flex !important;
             animation: flashBadge 0.4s infinite alternate;
         }
 
         @keyframes flashBadge {
-            0% {
-                opacity: 0.3;
-                transform: scale(0.95);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1.05);
-                box-shadow: 0 0 12px var(--neon-orange);
-            }
+            0% { opacity: 0.3; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); box-shadow: 0 0 12px var(--neon-orange); }
         }
 
-        .bulb-status-box,
-        .rgb-status-box,
-        .horn-status-box,
-        .signal-status-box {
+        .bulb-status-box, .rgb-status-box, .horn-status-box, .signal-status-box {
             display: none;
             align-items: center;
             gap: 3px;
@@ -181,49 +133,48 @@
             font-weight: bold;
             padding: 2px 6px;
             border-radius: 15px;
-            background: rgba(255, 51, 102, 0.15);
+            background: rgba(255, 0, 85, 0.15);
             color: var(--neon-red);
-            border: 1px solid rgba(255, 51, 102, 0.3);
+            border: 1px solid rgba(255, 0, 85, 0.3);
         }
 
         .ws-connected {
-            background: rgba(80, 211, 255, 0.15);
-            color: #0077b6;
-            border: 1px solid rgba(80, 211, 255, 0.5);
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--primary-glow);
+            border: 1px solid rgba(0, 242, 254, 0.3);
         }
 
         .status-gear {
             font-size: 15px;
-            color: rgba(0, 0, 0, 0.8);
+            color: rgba(255, 255, 255, 0.4);
             cursor: pointer;
             padding: 2px;
-            transition: transform 1s ease;
+            transition: transform 0.3s ease;
         }
 
         .status-gear:hover {
-            transform: rotate(360deg);
+            transform: rotate(90deg);
             color: var(--primary-glow);
         }
 
         .settings-dropdown-panel {
             position: absolute;
-            top: 45px;
-            right: 10px;
+            top: 45px; 
+            right: 10px; 
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            flex-direction: column; 
+            gap: 10px; 
             background: var(--panel-bg);
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid var(--primary-glow);
+            padding: 12px; 
+            border-radius: 14px; 
+            border: 1px solid rgba(0, 242, 254, 0.25);
             backdrop-filter: blur(30px);
             opacity: 0;
-            transform: translateY(-10px) scale(0.95);
+            transform: translateY(-10px) scale(0.95); 
             pointer-events: none;
             transition: all 0.3s ease;
-            width: 180px;
+            width: 180px; 
             z-index: 100;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
 
         .settings-dropdown-panel.show-panel {
@@ -233,9 +184,8 @@
         }
 
         .panel-label {
-            font-size: 8px;
-            font-weight: 800;
-            color: #2b2d42;
+            font-size: 8px; 
+            font-weight: 800; 
         }
 
         .horizontal-slider {
@@ -243,7 +193,7 @@
             appearance: none;
             width: 100%;
             height: 3px;
-            background: rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             outline: none;
         }
 
@@ -274,13 +224,13 @@
 
         .advanced-picker::-webkit-color-swatch {
             border-radius: 5px;
-            border: 1px solid rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .settings-btn {
-            background: rgba(80, 211, 255, 0.12);
-            border: 1px solid var(--primary-glow);
-            color: #0077b6;
+            background: rgba(0, 242, 254, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: var(--primary-glow);
             padding: 6px;
             border-radius: 8px;
             text-align: center;
@@ -291,9 +241,9 @@
         }
 
         .auto-a-btn {
-            background: rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            color: #2b2d42;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
             padding: 6px;
             border-radius: 8px;
             text-align: center;
@@ -307,10 +257,10 @@
         }
 
         .auto-a-btn.a-active {
-            background: rgba(80, 211, 255, 0.2);
+            background: rgba(0, 242, 254, 0.2);
             border-color: var(--primary-glow);
-            color: #0077b6;
-            box-shadow: 0 0 10px rgba(80, 211, 255, 0.3);
+            color: var(--primary-glow);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
         .modal-overlay {
@@ -319,7 +269,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(220, 235, 240, 0.75);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             display: flex;
@@ -337,13 +287,13 @@
         }
 
         .modal-box {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(10, 15, 30, 0.95);
             border: 1px solid var(--primary-glow);
             border-radius: 18px;
             padding: 22px;
             width: 85%;
             max-width: 310px;
-            box-shadow: 0 0 35px rgba(80, 211, 255, 0.35);
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.35);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -354,15 +304,15 @@
         .modal-title {
             font-size: 13px;
             font-weight: 800;
-            color: #0077b6;
+            color: var(--primary-glow);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .modal-option-btn {
-            background: rgba(0, 0, 0, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
-            color: #2b2d42;
+            color: #ffffff;
             padding: 12px;
             border-radius: 12px;
             font-size: 12px;
@@ -376,7 +326,7 @@
         }
 
         .modal-option-btn:active {
-            background: rgba(80, 211, 255, 0.2);
+            background: rgba(0, 242, 254, 0.2);
             border-color: var(--primary-glow);
             transform: scale(0.97);
         }
@@ -386,8 +336,8 @@
             padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--primary-glow);
-            background: rgba(255, 255, 255, 0.8);
-            color: #2b2d42;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
             font-size: 12px;
             box-sizing: border-box;
             outline: none;
@@ -399,7 +349,7 @@
             top: 10px;
             right: 12px;
             font-size: 16px;
-            color: rgba(0, 0, 0, 0.4);
+            color: rgba(255,255,255,0.6);
             cursor: pointer;
         }
 
@@ -410,57 +360,49 @@
             justify-content: center;
             flex: 1;
             gap: 15px;
-            color: rgba(0, 0, 0, 0.6);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 16px;
             font-weight: bold;
         }
 
         .glass-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
+            background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
             border: 1px solid var(--glass-border);
-            color: #2b2d42;
+            color: rgba(255, 255, 255, 0.7);
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-            touch-action: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            touch-action: none; 
             -webkit-tap-highlight-color: transparent;
             transition: all 0.15s ease;
             cursor: pointer;
         }
 
-        .horn-btn,
-        .park-btn,
-        .light-main-btn,
-        .rgb-toggle-btn,
-        .signal-btn {
-            width: 38px;
+        .horn-btn, .park-btn, .light-main-btn, .rgb-toggle-btn, .signal-btn {
+            width: 38px; 
             height: 38px;
             border-radius: 50%;
-            font-size: 14px;
+            font-size: 14px; 
         }
 
-        .horn-btn {
-            color: var(--neon-blue);
-            border-color: rgba(0, 168, 232, 0.2);
-        }
-
+        .horn-btn { color: var(--neon-blue); border-color: rgba(0, 210, 255, 0.2); }
         .horn-btn.active {
-            background: linear-gradient(135deg, #00d2ff, #00a8e8) !important;
-            box-shadow: 0 0 12px rgba(0, 210, 255, 0.6) !important;
-            color: #fff;
+            background: linear-gradient(135deg, #00f2fe, #00d2ff) !important;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.6) !important;
+            color: #000;
         }
 
         .nitro-btn {
             font-size: 18px;
-            width: 46px;
+            width: 46px; 
             height: 46px;
             border-radius: 50%;
-            background: rgba(255, 51, 102, 0.04);
-            border-color: rgba(255, 51, 102, 0.2);
+            background: rgba(255, 0, 85, 0.02);
+            border-color: rgba(255, 0, 85, 0.15);
             color: var(--neon-red);
         }
 
@@ -471,48 +413,40 @@
         }
 
         .park-btn {
-            background: rgba(255, 159, 28, 0.04);
-            border-color: rgba(255, 159, 28, 0.2);
+            background: rgba(255, 153, 0, 0.02);
+            border-color: rgba(255, 153, 0, 0.15);
             color: var(--neon-orange);
         }
 
         .park-active {
-            background: linear-gradient(135deg, #ff9f1c, #ff5500) !important;
-            box-shadow: 0 0 12px rgba(255, 159, 28, 0.6) !important;
+            background: linear-gradient(135deg, #ff9900, #ff5500) !important;
+            box-shadow: 0 0 12px rgba(255, 153, 0, 0.6) !important;
             color: #fff;
         }
 
-        .light-main-btn {
-            color: #e6a100;
-            border-color: rgba(230, 161, 0, 0.2);
-        }
-
+        .light-main-btn { color: #ffe600; border-color: rgba(255, 230, 0, 0.15); }
         .light-active {
-            background: linear-gradient(135deg, #ffd000, #ff9900) !important;
-            box-shadow: 0 0 12px rgba(255, 208, 0, 0.6) !important;
+            background: linear-gradient(135deg, #ffe600, #ff9900) !important;
+            box-shadow: 0 0 12px rgba(255, 230, 0, 0.6) !important;
             color: #000;
         }
 
-        .rgb-toggle-btn {
-            color: var(--neon-purple);
-            border-color: rgba(157, 78, 221, 0.2);
-        }
-
+        .rgb-toggle-btn { color: var(--neon-purple); border-color: rgba(182, 36, 255, 0.15); }
         .rgb-active {
-            background: linear-gradient(135deg, #9d4edd, #7b2cbf) !important;
-            box-shadow: 0 0 12px rgba(157, 78, 221, 0.6) !important;
+            background: linear-gradient(135deg, #b624ff, #8000ff) !important;
+            box-shadow: 0 0 12px rgba(182, 36, 255, 0.6) !important;
             color: #fff;
         }
 
         .signal-btn {
             color: var(--neon-orange);
-            border-color: rgba(255, 159, 28, 0.2);
+            border-color: rgba(255, 153, 0, 0.2);
             font-size: 16px;
         }
 
         .signal-active {
-            background: linear-gradient(135deg, #ff9f1c, #ff5500) !important;
-            box-shadow: 0 0 12px rgba(255, 159, 28, 0.6) !important;
+            background: linear-gradient(135deg, #ff9900, #ff5500) !important;
+            box-shadow: 0 0 12px rgba(255, 153, 0, 0.6) !important;
             color: #fff;
         }
 
@@ -521,37 +455,37 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 210px;
-            width: 42px;
-            background: rgba(255, 255, 255, 0.5);
+            height: 160px; 
+            width: 42px;  
+            background: rgba(5, 5, 15, 0.4);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 20px; 
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.6);
         }
 
         .slider-container-horizontal {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 42px;
-            width: 210px;
-            background: rgba(255, 255, 255, 0.5);
+            height: 42px; 
+            width: 210px; 
+            background: rgba(5, 5, 15, 0.4);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 20px; 
             padding: 0 8px;
-            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.6);
         }
 
         .vertical-slider {
             -webkit-appearance: none;
             appearance: none;
-            width: 195px;
-            height: 30px;
-            background: transparent;
+            width: 140px;
+            height: 30px; 
+            background: transparent; 
             transform: rotate(-90deg);
             outline: none;
             cursor: pointer;
-            touch-action: none;
+            touch-action: none; 
         }
 
         .horizontal-steer-slider {
@@ -565,16 +499,16 @@
             touch-action: none;
         }
 
-        .vertical-slider::-webkit-slider-thumb,
+        .vertical-slider::-webkit-slider-thumb, 
         .horizontal-steer-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 28px;
+            width: 28px; 
             height: 28px;
-            border-radius: 50%;
+            border-radius: 50%; 
             background: radial-gradient(circle at 35% 35%, #ffffff, var(--primary-glow));
-            box-shadow: 0 0 10px rgba(80, 211, 255, 0.6);
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+            border: 1.5px solid rgba(255,255,255,0.8);
         }
 
         .button-row {
@@ -595,10 +529,10 @@
             max-width: 220px;
             max-height: 220px;
             background: var(--center-box-bg);
-            border: 1px solid rgba(80, 211, 255, 0.5);
+            border: 1px solid rgba(0, 210, 255, 0.3);
             border-radius: 20px;
             backdrop-filter: blur(20px);
-            box-shadow: inset 0 0 0px rgba(80, 211, 255, 0.15), 0 0 200px rgba(0, 0, 0, 0.08);
+            box-shadow: inset 0 0 15px rgba(0, 210, 255, 0.15), 0 0 20px rgba(0, 0, 0, 0.8);
             z-index: 5;
             display: flex;
             align-items: center;
@@ -607,22 +541,12 @@
             overflow: hidden;
             padding: 10px;
             box-sizing: border-box;
-            transition: all 4s ease;
-        }
-
-        .center-box.expanded {
-            width: 53.33vw !important;
-            height: 40vw !important;
-            max-width: 533px !important;
-            max-height: 400px !important;
-            left: 40% !important;
-            padding: 0 !important;
-            box-shadow: inset 0 0 0px rgba(80, 211, 255, 0.15), 0 0 0px rgba(0, 0, 0, 0.08) !important;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .center-box:hover {
             border-color: var(--primary-glow);
-            box-shadow: inset 0 0 20px rgba(80, 211, 255, 0.3), 0 0 25px rgba(80, 211, 255, 0.4);
+            box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.3), 0 0 25px rgba(0, 242, 254, 0.4);
         }
 
         .cyber-face {
@@ -644,14 +568,14 @@
         .eye {
             width: 44px;
             height: 44px;
-            background: #ffffff;
+            background: var(--center-box-bg);
             border: 2px solid var(--neon-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 0 12px rgba(0, 168, 232, 0.3), inset 0 0 8px rgba(0, 168, 232, 0.2);
+            box-shadow: 0 0 12px rgba(0, 210, 255, 0.4), inset 0 0 8px rgba(0, 210, 255, 0.3);
             transition: transform 0.1s ease;
         }
 
@@ -663,19 +587,19 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: #00a8e8;
+            background: #00d2ff;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            box-shadow: 0 0 10px #00a8e8;
+            box-shadow: 0 0 10px #00d2ff;
             transition: transform 0.1s ease-out;
         }
 
         .pupil {
             width: 10px;
             height: 10px;
-            background: #003459;
+            background: #051020;
             border-radius: 50%;
             box-shadow: inset 0 0 3px #000000;
         }
@@ -685,7 +609,7 @@
             height: 8px;
             border-bottom: 3px solid var(--neon-blue);
             border-radius: 0 0 12px 12px;
-            box-shadow: 0 3px 8px rgba(0, 168, 232, 0.4);
+            box-shadow: 0 3px 8px rgba(0, 210, 255, 0.5);
             transition: all 0.3s ease;
         }
 
@@ -702,15 +626,15 @@
         .time-text {
             font-size: 22px;
             font-weight: 800;
-            color: #0077b6;
-            text-shadow: 0 0 12px rgba(80, 211, 255, 0.6);
+            color: var(--primary-glow);
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
             font-family: monospace;
         }
 
         .date-text {
             font-size: 10px;
             font-weight: 700;
-            color: rgba(43, 45, 66, 0.8);
+            color: rgba(255, 255, 255, 0.8);
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -730,7 +654,7 @@
             font-size: 16px;
             font-weight: 800;
             color: var(--neon-orange);
-            text-shadow: 0 0 10px rgba(255, 159, 28, 0.8);
+            text-shadow: 0 0 10px rgba(255, 153, 0, 0.8);
             white-space: nowrap;
             display: inline-block;
         }
@@ -741,13 +665,8 @@
         }
 
         @keyframes marqueeAnim {
-            0% {
-                transform: translateX(100%);
-            }
-
-            100% {
-                transform: translateX(-100%);
-            }
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
         .sensor-widget-container {
@@ -766,18 +685,18 @@
             display: flex;
             flex-direction: column;
             gap: 5px;
-            color: #0077b6;
+            color: var(--primary-glow);
             font-family: monospace;
         }
 
         .sensor-card-ui span {
-            color: #2b2d42;
+            color: #ffffff;
             font-weight: bold;
         }
 
         .game-controls {
             display: flex;
-            flex-direction: row;
+            flex-direction: row; 
             align-items: center;
             justify-content: space-between;
             flex: 1;
@@ -785,8 +704,7 @@
             position: relative;
         }
 
-        .left-controls-group,
-        .right-controls-group {
+        .left-controls-group, .right-controls-group {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -799,13 +717,13 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(80, 211, 255, 0.95);
-            color: #002855;
+            background: rgba(0, 242, 254, 0.9);
+            color: #000;
             padding: 8px 16px;
             border-radius: 20px;
             font-weight: bold;
             font-size: 12px;
-            box-shadow: 0 0 15px rgba(80, 211, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0,242,254,0.5);
             z-index: 2000;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -813,24 +731,14 @@
         }
 
         @media (orientation: portrait) {
-            .game-controls {
-                flex-direction: column;
-                gap: 20px;
-                justify-content: center;
-            }
-
-            .center-box {
-                width: 40vw;
-                height: 40vw;
-            }
+            .game-controls { flex-direction: column; gap: 20px; justify-content: center; }
+            .center-box { width: 40vw; height: 40vw; }
         }
-</style>
+    </style>
 </head>
-
 <body id="main-bg">
+
     <div class="toast-msg" id="toast-box">Alert Message</div>
-
-
 
     <div class="modal-overlay show-modal" id="start-mode-modal">
         <div class="modal-box" onclick="event.stopPropagation()">
@@ -844,106 +752,44 @@
         <div class="modal-box" onclick="event.stopPropagation()">
             <span class="modal-close-btn" onclick="closeWidgetModal()">✖</span>
             <div class="modal-title">🔮 Select Widget</div>
+            
             <div class="modal-option-btn" onclick="activateWidget('FACE')">🤖 Cyber Face Widget</div>
             <div class="modal-option-btn" onclick="activateWidget('DATETIME')">📅 Date & Time Widget</div>
             <div class="modal-option-btn" onclick="showTextInputField()">💬 Custom Text Widget</div>
             <div class="modal-option-btn" onclick="activateWidget('SENSOR')">📡 Sensor Data Widget</div>
-            <div class="modal-option-btn" onclick="activateWidget('CAM')">📷 Cam Mode</div>
 
             <div id="text-input-box" style="display: none; flex-direction: column; gap: 8px; margin-top: 5px;">
-                <input type="text" id="user-custom-text" class="modal-input" placeholder="Type text here..."
-                    maxlength="100">
-                <div class="modal-option-btn" style="background: var(--primary-glow); color: #000;"
-                    onclick="submitCustomTextWidget()">
+                <input type="text" id="user-custom-text" class="modal-input" placeholder="Type text here..." maxlength="100">
+                <div class="modal-option-btn" style="background: var(--primary-glow); color: #000;" onclick="submitCustomTextWidget()">
                     🚀 Apply (30 Seconds)
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="temp-info-modal" onclick="closeTempModal()">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <span class="modal-close-btn" onclick="closeTempModal()">✖</span>
-            <div class="modal-title">🌡️ Temperature Details</div>
-            <div
-                style="font-size: 12px; color: #ffffff; text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                <div>System Temp: <span id="pop-temp-level"
-                        style="color: var(--primary-glow); font-weight: bold;">32°C</span></div>
-                <div>Status: <span style="color: #00ff00; font-weight: bold;">NORMAL</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="battery-info-modal" onclick="closeBatteryModal()">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <span class="modal-close-btn" onclick="closeBatteryModal()">✖</span>
-            <div class="modal-title">🔋 Battery Details</div>
-            <div
-                style="font-size: 12px; color: #ffffff; text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                <div>Battery Level: <span id="pop-battery-level"
-                        style="color: var(--primary-glow); font-weight: bold;">85%</span></div>
-                <div>Power State: <span style="color: #00ff00; font-weight: bold;">BATTERY OK</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="wifi-info-modal" onclick="closeWifiModal()">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <span class="modal-close-btn" onclick="closeWifiModal()">✖</span>
-            <div class="modal-title">📶 Wi-Fi Details</div>
-            <div
-                style="font-size: 12px; color: #ffffff; text-align: left; display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
-                <div>Signal Strength: <span id="pop-wifi-signal"
-                        style="color: var(--primary-glow); font-weight: bold;">100%</span></div>
-                <div>Status: <span style="color: #00ff00; font-weight: bold;">CONNECTED</span></div>
-            </div>
-        </div>
-    </div>
-
     <div class="top-status" id="top-status-bar">
         <div class="status-left">
-            <div id="sys-mode-display" style="font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: 0.5px;">🎮
-                RC CAR MODE</div>
+            <div id="sys-mode-display" style="font-weight: 800; color: rgba(255,255,255,0.9); letter-spacing: 0.5px;">🎮 RC CAR MODE</div>
             <div class="status-item"><span id="ws-status" class="ws-status-badge">DISCONNECTED</span></div>
-
-            <div class="status-item" id="temp-box" onclick="openTempModal(event)" style="cursor: pointer;">
+            
+            <div class="status-item" id="temp-box">
                 <span class="temp-snow-icon">❄️</span>
                 <span class="temp-sun-icon">☀️</span>
-                <span id="temp-icon">🌡️</span>
+                <span id="temp-icon">🌡️</span> 
                 <span id="temp-display" style="color:var(--neon-orange); font-weight:bold;">34°C</span>
             </div>
 
-            <div class="status-item" id="battery-box" onclick="openBatteryModal(event)" style="cursor: pointer;">
-                <span> 🔋 </span>
-                <span id="battery-text" style="color:var(--primary-glow); font-weight:bold;">85%</span>
-            </div>
-            <div class="status-item" id="wifi-signal-box" onclick="openWifiModal(event)" style="cursor: pointer;">
-                <span> 📶 </span>
-                <span id="wifi-signal-text" style="color:var(--primary-glow); font-weight:bold;">100%</span>
-            </div>
-            <div class="status-item horn-status-box" id="horn-alert-container"><span>🔊</span> <span
-                    style="color: var(--primary-glow); font-weight:bold;">HORN</span></div>
-            <div class="status-item signal-status-box" id="signal-status-container"><span>🚨</span> <span
-                    id="signal-status-text" style="color: var(--neon-orange); font-weight:bold;">SIGNAL</span></div>
-            <div class="status-item bulb-status-box" id="bulb-container"><span>💡</span> <span id="led-display"
-                    style="color: #ffe600; font-weight:bold;">LED: 100%</span></div>
-            <div class="status-item rgb-status-box" id="rgb-container"><span>✨</span> <span id="rgb-display"
-                    style="color: var(--neon-purple); font-weight:bold;">RGB ON</span></div>
-
-            <div class="status-item" id="spd-box"><span
-                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">SPD:</span> <span
-                    id="speed-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
-            </div>
-            <div class="status-item" id="str-box"><span
-                    style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">STR:</span> <span
-                    id="steer-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span>
-            </div>
+            <div class="status-item" id="bat-box"><span id="bat-icon">🔋</span> <span id="bat-display" style="color:var(--primary-glow); font-weight:bold;">85%</span></div>
+            <div class="status-item" id="wifi-signal-box"><span> 📶 </span><span id="wifi-signal-text" style="color:var(--primary-glow); font-weight:bold;">100%</span></div>
+            <div class="status-item horn-status-box" id="horn-alert-container"><span>🔊</span> <span style="color: var(--primary-glow); font-weight:bold;">HORN</span></div>
+            <div class="status-item signal-status-box" id="signal-status-container"><span>🚨</span> <span id="signal-status-text" style="color: var(--neon-orange); font-weight:bold;">SIGNAL</span></div>
+            <div class="status-item bulb-status-box" id="bulb-container"><span>💡</span> <span id="led-display" style="color: #ffe600; font-weight:bold;">LED: 100%</span></div>
+            <div class="status-item rgb-status-box" id="rgb-container"><span>✨</span> <span id="rgb-display" style="color: var(--neon-purple); font-weight:bold;">RGB ON</span></div>
+            
+            <div class="status-item" id="spd-box"><span style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">SPD:</span> <span id="speed-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span></div>
+            <div class="status-item" id="str-box"><span style="color: rgba(255,255,255,0.4); font-size:8px; font-weight: bold;">STR:</span> <span id="steer-display" style="color: var(--primary-glow); font-weight:bold; min-width:20px;">0%</span></div>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <div class="status-gear" title="Information"
-                onclick="window.open('https://cmadushan2009-stack.github.io/information/', '_blank')">ⓘ</div>
-            <div class="status-gear" id="gear-btn" onclick="toggleSettingsPanel(event)">⚙️</div>
-        </div>
+        <div class="status-gear" id="gear-btn" onclick="toggleSettingsPanel(event)">⚙️</div>
     </div>
 
     <div class="settings-dropdown-panel" id="settings-panel" onclick="event.stopPropagation()">
@@ -951,21 +797,15 @@
             <span>🅰️ AUTO LIGHT (LDR)</span>
             <span id="auto-a-status">OFF</span>
         </div>
-        <div class="auto-a-btn" id="auto-arrow-toggle" onclick="toggleAutoArrowButton()" style="margin-top: 5px;">
-            <span>↪️ AUTO ARROW LIGHT</span>
-            <span id="auto-arrow-status">OFF</span>
-        </div>
         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0;">
         <div style="display: flex; flex-direction: column; gap: 6px;">
             <div class="panel-label" style="color: #ffe600;">☀️ HEADLIGHT BRIGHTNESS</div>
-            <input type="range" min="0" max="100" value="100" class="horizontal-slider" id="headlight-slider"
-                oninput="updateHeadlightBrightness(this.value)">
+            <input type="range" min="0" max="100" value="100" class="horizontal-slider" id="headlight-slider" oninput="updateHeadlightBrightness(this.value)">
         </div>
         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0;">
         <div class="color-picker-row">
             <div class="panel-label" style="color: var(--neon-purple);">✨ CAR RGB COLOR</div>
-            <input type="color" id="adv-color-picker" class="advanced-picker" value="#ffffff"
-                oninput="pickCarColor(this.value)">
+            <input type="color" id="adv-color-picker" class="advanced-picker" value="#ffffff" oninput="pickCarColor(this.value)">
         </div>
         <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.06); margin: 4px 0;">
         <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -983,24 +823,15 @@
         <div class="left-controls-group">
             <div class="glass-btn nitro-btn" id="btn-nitro">🔥</div>
             <div class="slider-container-vertical">
-                <input type="range" min="-100" max="100" value="0" class="vertical-slider" id="throttle-slider"
-                    oninput="updateSlider(this.value)">
+                <input type="range" min="-100" max="100" value="0" class="vertical-slider" id="throttle-slider" oninput="updateSlider(this.value)">
             </div>
         </div>
 
         <div class="center-box" onclick="openWidgetModal(event)">
             <div class="cyber-face" id="widget-cyber-face">
                 <div class="eyes-wrapper">
-                    <div class="eye" id="eye-left">
-                        <div class="iris" id="iris-left">
-                            <div class="pupil"></div>
-                        </div>
-                    </div>
-                    <div class="eye" id="eye-right">
-                        <div class="iris" id="iris-right">
-                            <div class="pupil"></div>
-                        </div>
-                    </div>
+                    <div class="eye" id="eye-left"><div class="iris" id="iris-left"><div class="pupil"></div></div></div>
+                    <div class="eye" id="eye-right"><div class="iris" id="iris-right"><div class="pupil"></div></div></div>
                 </div>
                 <div class="cyber-mouth" id="bot-mouth"></div>
             </div>
@@ -1017,40 +848,27 @@
             <div class="sensor-widget-container" id="widget-sensor-container">
                 <div class="sensor-card-ui">
                     <div>📏 DIST : <span id="ui-dist">0.0 cm</span></div>
-                    <div>☀️ LDR : <span id="ui-ldr">0</span></div>
+                    <div>☀️ LDR  : <span id="ui-ldr">0</span></div>
                     <div>🌡️ TEMP : <span id="ui-temp">0 °C</span></div>
-                    <div>⚡ SPD : <span id="ui-speed">0%</span></div>
-                    <div>🎯 STR : <span id="ui-steer">0%</span></div>
-                </div>
-            </div>
-
-            <div id="widget-cam-container"
-                style="display: none; width: 100%; height: 100%; overflow: hidden; margin: 0; padding: 0;">
-                <iframe id="cam-web-frame" src="" style="width: 100%; height: 100%; border: none;"></iframe>
-                <div id="cam-touch-overlay" onclick="openWidgetModal(event)"
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: block;">
+                    <div>⚡ SPD  : <span id="ui-speed">0%</span></div>
+                    <div>🎯 STR  : <span id="ui-steer">0%</span></div>
                 </div>
             </div>
         </div>
-
+        
         <div class="right-controls-group">
+           
             <div class="slider-container-horizontal">
-                <input type="range" min="-100" max="100" value="0" class="horizontal-steer-slider" id="steer-slider"
-                    oninput="updateSteerSlider(this.value)">
+                <input type="range" min="-100" max="100" value="0" class="horizontal-steer-slider" id="steer-slider" oninput="updateSteerSlider(this.value)">
             </div>
 
             <div class="button-row">
+                <div class="glass-btn signal-btn" id="btn-signal-l" onclick="toggleSignal('L')">◀</div>
                 <div class="glass-btn light-main-btn" id="light-btn">🔅</div>
                 <div class="glass-btn horn-btn" id="btn-horn">🔊</div>
                 <div class="glass-btn rgb-toggle-btn" id="rgb-toggle-btn" onclick="toggleRGB()">✨</div>
                 <div class="glass-btn park-btn" id="btn-park" onclick="toggleParkMode()">🛑</div>
-            </div>
-
-            <div class="button-row" id="signal-btn-row">
-                <div class="glass-btn signal-btn" id="btn-signal-l" onclick="toggleSignal('L')">◀</div>
                 <div class="glass-btn signal-btn" id="btn-signal-r" onclick="toggleSignal('R')">▶</div>
-                <div class="glass-btn signal-btn" id="btn-joystick" style="display: none;" onclick="toggleJoystick()">
-                    🕹️</div>
             </div>
         </div>
     </div>
@@ -1061,19 +879,19 @@
         const speedDisplay = document.getElementById('speed-display');
         const steerDisplay = document.getElementById('steer-display');
         const sysModeDisplay = document.getElementById('sys-mode-display');
-
+        
         const settingsPanel = document.getElementById('settings-panel');
         const gearBtn = document.getElementById('gear-btn');
         const rgbToggleBtn = document.getElementById('rgb-toggle-btn');
         const wsStatusBadge = document.getElementById('ws-status');
-
+        
         const startModeModal = document.getElementById('start-mode-modal');
         const widgetModal = document.getElementById('widget-modal');
         const textInputBox = document.getElementById('text-input-box');
-
+        
         const rcControls = document.getElementById('rc-controls');
         const autoScreen = document.getElementById('auto-screen');
-
+        
         const tempBox = document.getElementById('temp-box');
         const tempDisplay = document.getElementById('temp-display');
 
@@ -1081,7 +899,7 @@
         const widgetDateTime = document.getElementById('widget-datetime');
         const widgetTextContainer = document.getElementById('widget-text-container');
         const widgetSensorContainer = document.getElementById('widget-sensor-container');
-
+        
         const customTextElement = document.getElementById('custom-text-element');
         const liveTimeDisplay = document.getElementById('live-time-display');
         const liveDateDisplay = document.getElementById('live-date-display');
@@ -1094,7 +912,7 @@
         const bulbContainer = document.getElementById('bulb-container');
         const ledDisplay = document.getElementById('led-display');
         const rgbContainer = document.getElementById('rgb-container');
-        const hornAlertContainer = document.getElementById('horn-alert-container');
+        const hornAlertContainer = document.getElementById('horn-alert-container'); 
         const signalStatusContainer = document.getElementById('signal-status-container');
         const signalStatusText = document.getElementById('signal-status-text');
         const lightBtn = document.getElementById('light-btn');
@@ -1108,32 +926,6 @@
         const autoAStatus = document.getElementById('auto-a-status');
         let isAutoAEnabled = false;
 
-        const autoArrowToggle = document.getElementById('auto-arrow-toggle');
-        const autoArrowStatus = document.getElementById('auto-arrow-status');
-        const signalBtnRow = document.getElementById('signal-btn-row');
-        let isAutoArrowEnabled = false;
-
-        function toggleAutoArrowButton() {
-            isAutoArrowEnabled = !isAutoArrowEnabled;
-            if (isAutoArrowEnabled) {
-                autoArrowToggle.classList.add('a-active');
-                autoArrowStatus.innerText = "ON";
-                if (activeSignal !== null) { toggleSignal(activeSignal); }
-
-                // signalBtnRow hide නොකර Signal බටන් දෙක පමණක් hide කිරීම
-                if (signalLBtn) signalLBtn.style.display = "none";
-                if (signalRBtn) signalRBtn.style.display = "none";
-            } else {
-                autoArrowToggle.classList.remove('a-active');
-                autoArrowStatus.innerText = "OFF";
-
-                // Auto Arrow OFF වූ විට Signal බටන් දෙක නැවත පෙන්වීම
-                if (signalLBtn) signalLBtn.style.display = "flex";
-                if (signalRBtn) signalRBtn.style.display = "flex";
-            }
-            sendCmd("TOGGLE_AUTO_ARROW");
-        }
-
         let currentSteerX = 0;
         let currentThrottleY = 0;
         let activeWidget = "FACE";
@@ -1141,10 +933,10 @@
         let dateTimeInterval = null;
 
         let isLightOn = false;
-        let isParkMode = false;
+        let isParkMode = false; 
         let isRGBOn = false;
-        let activeSignal = null;
-        let currentSystemMode = "RC";
+        let activeSignal = null; 
+        let currentSystemMode = "RC"; 
 
         function showToast(msg) {
             toastBox.innerText = msg;
@@ -1157,79 +949,32 @@
         }
 
         let ws;
-        let wsReconnectTimer = null;
-        let wsHeartbeatTimer = null;
-
-        function handleWebSocketMessage(event) {
-            if (event.data.startsWith("ALERT_")) {
-                showToast(event.data.substring(6));
-                return;
-            }
-
-            if (event.data.startsWith("LIGHT_STATE_")) {
-                let st = event.data.substring(12) === "1";
-                updateLightUIState(st);
-                return;
-            }
-
-            try {
-                let data = JSON.parse(event.data);
-
-                if (data.dist !== undefined) document.getElementById('ui-dist').innerText = data.dist + " cm";
-                if (data.wifi !== undefined) document.getElementById('wifi-signal-text').innerText = data.wifi + "%";
-                if (data.ldr !== undefined) document.getElementById('ui-ldr').innerText = data.ldr;
-                if (data.temp !== undefined) {
-                    document.getElementById('ui-temp').innerText = data.temp + " °C";
-                    updateTemperatureUI(data.temp);
-                }
-                if (data.blink !== undefined && activeWidget === "FACE") {
-                    eyeLeft.classList.toggle('blinking', !!data.blink);
-                    eyeRight.classList.toggle('blinking', !!data.blink);
-                }
-            } catch (e) { }
-        }
-
         function initWebSocket() {
             let wsGateway = `ws://${window.location.hostname}/ws`;
-            if (window.location.hostname === "") { wsGateway = "ws://192.168.4.1/ws"; }
-
+            if(window.location.hostname === "") { wsGateway = "ws://192.168.4.1/ws"; }
             try {
                 ws = new WebSocket(wsGateway);
-                ws.onmessage = handleWebSocketMessage;
-
-                ws.onopen = function () {
+                ws.onopen = function() {
                     wsStatusBadge.innerText = "LIVE";
                     wsStatusBadge.classList.add('ws-connected');
-                    sendCmd("CLIENT_CONNECTED");
+                    sendCmd("CLIENT_CONNECTED"); 
                 };
-
-                ws.onclose = function () {
+                ws.onclose = function() {
                     wsStatusBadge.innerText = "OFF";
                     wsStatusBadge.classList.remove('ws-connected');
-                    if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
-                    wsReconnectTimer = setTimeout(initWebSocket, 2000);
+                    setTimeout(initWebSocket, 2000); 
                 };
-
-                if (wsHeartbeatTimer) clearInterval(wsHeartbeatTimer);
-                wsHeartbeatTimer = setInterval(() => {
-                    if (ws && ws.readyState === WebSocket.OPEN) {
-                        ws.send("HEARTBEAT");
-                    }
-                }, 500);
-            } catch (e) {
-                if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
-                wsReconnectTimer = setTimeout(initWebSocket, 2000);
-            }
+            } catch(e) {}
         }
 
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             if (settingsPanel.classList.contains('show-panel') && !settingsPanel.contains(e.target) && !gearBtn.contains(e.target)) {
                 settingsPanel.classList.remove('show-panel');
             }
         });
 
         function toggleSettingsPanel(e) {
-            if (e) e.stopPropagation();
+            if(e) e.stopPropagation();
             settingsPanel.classList.toggle('show-panel');
         }
 
@@ -1240,7 +985,7 @@
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => { });
+                document.documentElement.requestFullscreen().catch(() => {});
             } else {
                 if (document.exitFullscreen) document.exitFullscreen();
             }
@@ -1249,15 +994,12 @@
 
         function toggleAutoAButton() {
             isAutoAEnabled = !isAutoAEnabled;
-            if (isAutoAEnabled) {
+            if(isAutoAEnabled) {
                 autoAToggle.classList.add('a-active');
                 autoAStatus.innerText = "ON";
-                if (isLightOn) { toggleHeadlight(); }
-                if (lightBtn) { lightBtn.style.display = "none"; }
             } else {
                 autoAToggle.classList.remove('a-active');
                 autoAStatus.innerText = "OFF";
-                if (lightBtn) { lightBtn.style.display = "flex"; }
             }
             sendCmd("TOGGLE_AUTO_LDR");
         }
@@ -1276,7 +1018,7 @@
         let isLongPress = false;
 
         function handleLightPressStart(e) {
-            if (e) e.preventDefault();
+            if(e) e.preventDefault();
             isLongPress = false;
             lightBtnPressTimer = setTimeout(() => {
                 isLongPress = true;
@@ -1286,26 +1028,31 @@
         }
 
         function handleLightPressEnd(e) {
-            if (e) e.preventDefault();
+            if(e) e.preventDefault();
             clearTimeout(lightBtnPressTimer);
-            if (!isLongPress) { toggleHeadlight(); }
+            if (!isLongPress) {
+                toggleHeadlight();
+            }
         }
 
-        lightBtn.addEventListener('touchstart', handleLightPressStart, { passive: false });
-        lightBtn.addEventListener('touchend', handleLightPressEnd, { passive: false });
+        lightBtn.addEventListener('touchstart', handleLightPressStart, {passive: false});
+        lightBtn.addEventListener('touchend', handleLightPressEnd, {passive: false});
         lightBtn.addEventListener('mousedown', handleLightPressStart);
         lightBtn.addEventListener('mouseup', handleLightPressEnd);
 
         function toggleHeadlight() {
             isLightOn = !isLightOn;
             updateLightUIState(isLightOn);
-            if (isLightOn) sendCmd("LIGHT_ON");
-            else sendCmd("LIGHT_OFF");
+            if(isLightOn) {
+                sendCmd("LIGHT_ON");
+            } else {
+                sendCmd("LIGHT_OFF");
+            }
         }
 
         function updateLightUIState(state) {
             isLightOn = state;
-            if (isLightOn) {
+            if(isLightOn) {
                 lightBtn.classList.add('light-active');
                 bulbContainer.style.display = 'flex';
             } else {
@@ -1316,7 +1063,7 @@
 
         function toggleRGB() {
             isRGBOn = !isRGBOn;
-            if (isRGBOn) {
+            if(isRGBOn) {
                 rgbToggleBtn.classList.add('rgb-active');
                 rgbContainer.style.display = 'flex';
                 sendCmd("RGB_ON");
@@ -1329,7 +1076,7 @@
 
         function toggleParkMode() {
             isParkMode = !isParkMode;
-            if (isParkMode) {
+            if(isParkMode) {
                 parkBtn.classList.add('park-active');
                 resetSlider();
                 resetSteerSlider();
@@ -1341,24 +1088,24 @@
         }
 
         function toggleSignal(dir) {
-            if (activeSignal === dir) {
+            if(activeSignal === dir) {
                 activeSignal = null;
-                if (signalLBtn) signalLBtn.classList.remove('signal-active');
-                if (signalRBtn) signalRBtn.classList.remove('signal-active');
-                if (signalStatusContainer) signalStatusContainer.classList.remove('active-signal');
+                if(signalLBtn) signalLBtn.classList.remove('signal-active');
+                if(signalRBtn) signalRBtn.classList.remove('signal-active');
+                if(signalStatusContainer) signalStatusContainer.classList.remove('active-signal');
                 sendCmd("SIGNAL_OFF");
             } else {
                 activeSignal = dir;
-                if (signalLBtn) signalLBtn.classList.toggle('signal-active', dir === 'L');
-                if (signalRBtn) signalRBtn.classList.toggle('signal-active', dir === 'R');
-                if (signalStatusText) signalStatusText.innerText = dir === 'L' ? "L-SIGNAL" : "R-SIGNAL";
-                if (signalStatusContainer) signalStatusContainer.classList.add('active-signal');
+                if(signalLBtn) signalLBtn.classList.toggle('signal-active', dir === 'L');
+                if(signalRBtn) signalRBtn.classList.toggle('signal-active', dir === 'R');
+                if(signalStatusText) signalStatusText.innerText = dir === 'L' ? "L-SIGNAL" : "R-SIGNAL";
+                if(signalStatusContainer) signalStatusContainer.classList.add('active-signal');
                 sendCmd("SIGNAL_" + dir);
             }
         }
 
         function openWidgetModal(e) {
-            if (e) e.stopPropagation();
+            if(e) e.stopPropagation();
             widgetModal.classList.add('show-modal');
             textInputBox.style.display = "none";
         }
@@ -1374,56 +1121,22 @@
         function activateWidget(type) {
             activeWidget = type;
 
-            // ➕ CAM Mode එක තේරූ විට පමණක් 🕹️ බටන් එක පෙන්වීමේ Logic එක
-            const joystickBtn = document.getElementById('btn-joystick');
-            if (joystickBtn) {
-                if (type === 'CAM') {
-                    joystickBtn.style.display = "flex";
-                } else {
-                    joystickBtn.style.display = "none";
-                }
-            }
-
             widgetFace.style.display = "none";
             widgetDateTime.style.display = "none";
             widgetTextContainer.style.display = "none";
             widgetSensorContainer.style.display = "none";
 
-            const camContainer = document.getElementById('widget-cam-container');
-            if (camContainer) camContainer.style.display = "none";
-
             if (dateTimeInterval) clearInterval(dateTimeInterval);
             if (textTimer) clearTimeout(textTimer);
 
-            const centerBox = document.querySelector('.center-box');
-
             if (type === 'FACE') {
                 widgetFace.style.display = "flex";
-                if (centerBox) centerBox.classList.remove('expanded');
             } else if (type === 'DATETIME') {
                 widgetDateTime.style.display = "flex";
                 updateDateTime();
                 dateTimeInterval = setInterval(updateDateTime, 1000);
-                if (centerBox) centerBox.classList.remove('expanded');
             } else if (type === 'SENSOR') {
                 widgetSensorContainer.style.display = "flex";
-                if (centerBox) centerBox.classList.remove('expanded');
-            } else if (type === 'CAM') {
-                if (centerBox) centerBox.classList.add('expanded');
-
-                // CAM Mode එකට ආ සැනින් Default එක 🕹️ OFF කර Menu Open වන තත්ත්වයට සෙට් කිරීම
-                isJoystickActive = false;
-                const joystickBtn = document.getElementById('btn-joystick');
-                const overlay = document.getElementById('cam-touch-overlay');
-
-                if (joystickBtn) joystickBtn.classList.remove('signal-active');
-                if (overlay) overlay.style.display = "block"; // Shield එක Display වේ
-
-                const camFrame = document.getElementById('cam-web-frame');
-                if (camContainer && camFrame) {
-                    camContainer.style.display = "flex";
-                    camFrame.src = "https://cmadushan2009-stack.github.io/information/";
-                }
             }
 
             sendCmd("WIDGET_" + type);
@@ -1433,8 +1146,8 @@
         function updateDateTime() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
-            const dateStr = now.toLocaleDateString('sv-SE');
-
+            const dateStr = now.toISOString().split('T')[0];
+            
             liveTimeDisplay.innerText = timeStr;
             liveDateDisplay.innerText = dateStr;
 
@@ -1473,8 +1186,8 @@
         function updateTemperatureUI(tempVal) {
             tempDisplay.innerText = tempVal + "°C";
             tempBox.classList.remove('temp-hot', 'temp-cold');
-            if (tempVal > 38) tempBox.classList.add('temp-hot');
-            else if (tempVal < 20) tempBox.classList.add('temp-cold');
+            if(tempVal > 38) tempBox.classList.add('temp-hot');
+            else if(tempVal < 20) tempBox.classList.add('temp-cold');
         }
 
         function sendCmd(cmd, urgent = false) {
@@ -1484,9 +1197,9 @@
         }
 
         function updateEyePosition() {
-            if (isParkMode || activeWidget !== "FACE") return;
+            if(isParkMode || activeWidget !== "FACE") return;
             let moveX = (currentSteerX / 100) * 8;
-            let moveY = -(currentThrottleY / 100) * 7;
+            let moveY = -(currentThrottleY / 100) * 7; 
             irisLeft.style.transform = `translate(${moveX}px, ${moveY}px)`;
             irisRight.style.transform = `translate(${moveX}px, ${moveY}px)`;
         }
@@ -1494,22 +1207,12 @@
         function initSelectedMode(mode) {
             currentSystemMode = mode;
             startModeModal.classList.remove('show-modal');
-
-            // Mode change කරන හැම වෙලාවකම controls zero කරලා නවතින්න
-            slider.value = 0;
-            steerSlider.value = 0;
-            currentThrottleY = 0;
-            currentSteerX = 0;
-            updateEyePosition();
-            sendCmd("SPEED_0");
-            sendCmd("STEER_0");
-
-            if (mode === 'RC') {
+            if(mode === 'RC') {
                 rcControls.style.display = "flex";
                 autoScreen.style.display = "none";
                 sysModeDisplay.innerText = "🎮 RC CAR MODE";
                 sendCmd("MODE_RC");
-            } else if (mode === 'AUTO') {
+            } else if(mode === 'AUTO') {
                 rcControls.style.display = "none";
                 autoScreen.style.display = "flex";
                 sysModeDisplay.innerText = "🤖 AUTO MODE";
@@ -1519,29 +1222,29 @@
 
         function setupSensitiveButton(id, startCallback, endCallback, isToggle = false) {
             let btn = document.getElementById(id);
-            if (!btn) return;
-
+            if(!btn) return;
+            
             const handleStart = (e) => {
-                if (e) e.preventDefault();
-                if (!isToggle) btn.classList.add('active');
-                if (startCallback) startCallback();
+                if(e) e.preventDefault();
+                if(!isToggle) btn.classList.add('active');
+                if(startCallback) startCallback();
             };
 
             const handleEnd = (e) => {
-                if (e) e.preventDefault();
-                if (!isToggle) btn.classList.remove('active');
-                if (endCallback) endCallback();
+                if(e) e.preventDefault();
+                if(!isToggle) btn.classList.remove('active');
+                if(endCallback) endCallback();
             };
 
-            btn.addEventListener('touchstart', handleStart, { passive: false });
-            btn.addEventListener('touchend', handleEnd, { passive: false });
+            btn.addEventListener('touchstart', handleStart, {passive: false});
+            btn.addEventListener('touchend', handleEnd, {passive: false});
             btn.addEventListener('mousedown', handleStart);
             btn.addEventListener('mouseup', handleEnd);
-            btn.addEventListener('mouseleave', () => { if (!isToggle) btn.classList.remove('active'); });
+            btn.addEventListener('mouseleave', () => { if(!isToggle) btn.classList.remove('active'); });
         }
 
         setupSensitiveButton('btn-nitro', () => {
-            if (isParkMode) return;
+            if(isParkMode) return;
             bodyBg.classList.add('nitro-active');
             speedDisplay.innerText = "100%";
             slider.value = 100;
@@ -1549,7 +1252,7 @@
             updateEyePosition();
             sendCmd('SPEED_100', true);
         }, () => {
-            if (isParkMode) return;
+            if(isParkMode) return;
             bodyBg.classList.remove('nitro-active');
             resetSlider();
         });
@@ -1566,12 +1269,13 @@
         let steerSnapped = false;
 
         function updateSlider(val) {
-            if (isParkMode) { slider.value = 0; speedDisplay.innerText = "0%"; return; }
-
+            if(isParkMode) { slider.value = 0; speedDisplay.innerText = "0%"; return; }
+            
             let parsedVal = parseInt(val);
+
             if (parsedVal === 0) {
                 if (!throttleSnapped) {
-                    triggerHapticFeedback();
+                    triggerHapticFeedback(); 
                     throttleSnapped = true;
                 }
             } else {
@@ -1586,12 +1290,13 @@
         }
 
         function updateSteerSlider(val) {
-            if (isParkMode) { steerSlider.value = 0; steerDisplay.innerText = "0%"; return; }
-
+            if(isParkMode) { steerSlider.value = 0; steerDisplay.innerText = "0%"; return; }
+            
             let parsedVal = parseInt(val);
+
             if (parsedVal === 0) {
                 if (!steerSnapped) {
-                    triggerHapticFeedback();
+                    triggerHapticFeedback(); 
                     steerSnapped = true;
                 }
             } else {
@@ -1613,62 +1318,44 @@
         steerSlider.addEventListener('touchend', resetSteerSlider);
         steerSlider.addEventListener('mouseup', resetSteerSlider);
 
-        window.onload = function () {
+        window.onload = function() {
             initWebSocket();
             updateTemperatureUI(34);
+
+            ws.onmessage = function(event) {
+                if(event.data.startsWith("ALERT_")) {
+                    showToast(event.data.substring(6));
+                    return;
+                }
+
+                if(event.data.startsWith("LIGHT_STATE_")) {
+                    let st = event.data.substring(12) === "1";
+                    updateLightUIState(st);
+                    return;
+                }
+
+                try {
+                    let data = JSON.parse(event.data);
+                    
+                    if(data.dist !== undefined) document.getElementById('ui-dist').innerText = data.dist + " cm";
+                    if(data.wifi !== undefined) document.getElementById('wifi-signal-text').innerText = data.wifi + "%";
+                    if(data.ldr !== undefined) document.getElementById('ui-ldr').innerText = data.ldr;
+                    if(data.temp !== undefined) {
+                        document.getElementById('ui-temp').innerText = data.temp + " °C";
+                        updateTemperatureUI(data.temp);
+                    }
+                    if(data.blink !== undefined && activeWidget === "FACE") {
+                        if(data.blink) {
+                            eyeLeft.classList.add('blinking');
+                            eyeRight.classList.add('blinking');
+                        } else {
+                            eyeLeft.classList.remove('blinking');
+                            eyeRight.classList.remove('blinking');
+                        }
+                    }
+                } catch(e) {}
+            };
         };
-
-        let isJoystickActive = false; // 🕹️ බටන් එකේ Active/Inactive තත්ත්වය
-
-        // 🕹️ බටන් එක එබූ විට Toggle වන Function එක
-        function toggleJoystick() {
-            isJoystickActive = !isJoystickActive;
-            const joystickBtn = document.getElementById('btn-joystick');
-            const overlay = document.getElementById('cam-touch-overlay');
-
-            if (isJoystickActive) {
-                // 🕹️ ON වූ විට: Shield Layer එක Hide වී Inner Web එක Control කළ හැක
-                if (joystickBtn) joystickBtn.classList.add('signal-active');
-                if (overlay) overlay.style.display = 'none';
-            } else {
-                // 🕹️ OFF වූ විට: Inner Web එක Lock වී, කොටුව Touch කළ විට Menu Open වේ
-                if (joystickBtn) joystickBtn.classList.remove('signal-active');
-                if (overlay) overlay.style.display = 'block';
-            }
-        }
-        function openWifiModal(e) {
-            if (e) e.stopPropagation();
-            const currentSignal = document.getElementById('wifi-signal-text').innerText;
-            document.getElementById('pop-wifi-signal').innerText = currentSignal;
-            document.getElementById('wifi-info-modal').classList.add('show-modal');
-        }
-
-        function closeWifiModal() {
-            document.getElementById('wifi-info-modal').classList.remove('show-modal');
-        }
-
-        function openBatteryModal(e) {
-            if (e) e.stopPropagation();
-            const currentBatt = document.getElementById('battery-text') ? document.getElementById('battery-text').innerText : '85%';
-            document.getElementById('pop-battery-level').innerText = currentBatt;
-            document.getElementById('battery-info-modal').classList.add('show-modal');
-        }
-
-        function closeBatteryModal() {
-            document.getElementById('battery-info-modal').classList.remove('show-modal');
-        }
-
-        function openTempModal(e) {
-            if (e) e.stopPropagation();
-            const currentTemp = document.getElementById('temp-text') ? document.getElementById('temp-text').innerText : '32°C';
-            document.getElementById('pop-temp-level').innerText = currentTemp;
-            document.getElementById('temp-info-modal').classList.add('show-modal');
-        }
-
-        function closeTempModal() {
-            document.getElementById('temp-info-modal').classList.remove('show-modal');
-        }
     </script>
 </body>
-
 </html>
